@@ -1,42 +1,13 @@
 import React from "react";
-import Select from "react-select";
-import { components } from "react-select";
-import { RiFlightTakeoffFill, RiFlightLandLine } from "react-icons/ri";
-import { FaArrowsAltH } from "react-icons/fa";
+import AsyncSelect from "react-select/async";
 
 const customStyles = {
   control: (provided) => ({
     ...provided,
     display: "flex",
-    // width: "230px",
-
     boxShadow: "none",
-    // padding: "5px",
-
     border: "none",
   }),
-  // dropdownIndicator: (provided) => ({
-  //   ...provided,
-  //   padding: "0 8px",
-  // }),
-  // indicatorSeparator: () => ({
-  //   display: "none",
-  // }),
-  // singleValue: (provided) => ({
-  //   ...provided,
-  //   marginRight: "8px",
-  //   color: "black",
-  // }),
-  // placeholder: (provided) => ({
-  //   ...provided,
-  //   display: "flex",
-  //   alignItems: "center",
-
-  // }),
-  // clearIndicator: (provided) => ({
-  //   ...provided,
-  //   padding: "0 8px",
-  // }),
 };
 
 const CustomPlaceholder = ({ icon, text }) => (
@@ -45,26 +16,14 @@ const CustomPlaceholder = ({ icon, text }) => (
   </div>
 );
 
-const CustomSelect = ({
-  options,
-  placeholder,
-  icon,
-  onInputChange,
-  formValue,
-  onChange,
-}) => {
+const CustomSelect = ({ placeholder, icon, loadOptions, defaultOptions }) => {
   return (
-    <Select
-      options={options}
+    <AsyncSelect
       isClearable={true}
       styles={customStyles}
       placeholder={<CustomPlaceholder icon={icon} text={placeholder} />}
-      
-      defaultValue={formValue}
-      onChange={onChange}
-
-      // customWidth="2500px"
-      // onInputChange={onInputChange}
+      defaultOptions={defaultOptions}
+      loadOptions={loadOptions}
       components={{
         IndicatorSeparator: () => null,
       }}

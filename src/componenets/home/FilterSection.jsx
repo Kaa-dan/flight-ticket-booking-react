@@ -23,12 +23,8 @@ const FilterSection = () => {
   const [filteredCountryDataTwo, setFilteredCountryDataTwo] = useState([]);
 
   //filter state for country code
-
   const [countryCodeone, setCountryCodeOne] = useState("IN");
-  const [countryCodeTwo, setCountryCodeTwo] = useState("IN");
-
-
-  const [formValue, setFormValue] = useState("");
+  const [defaultOptions, setDefaultOptions] = useState([]);
 
   //state for modal
   const [modalIsOpen, setModelIsOpen] = useState(false);
@@ -48,33 +44,74 @@ const FilterSection = () => {
     setModelIsOpen(true);
   };
 
-  // API search
-  const getCountriesHandler = async () => {
+  // API search for first select tag
+
+  const getCountriesHandlerOne = async (inputValue, callback) => {
     try {
-      const data = await axios.get(
-        `${import.meta.env.VITE_SERVER_URL}/search/user-get-all-airports`
+      let response = await axios.get(
+        `${
+          import.meta.env.VITE_SERVER_URL
+        }search/user-get-all-airports?search=${inputValue}`
       );
 
-      setFilteredCountryDataOne(
-        data.data.data.map((item, index) => ({
-          value: item.code,
-          label: `${item?.name} - ${item?.code}`,
-        }))
-      );
-      setFilteredCountryDataTwo(
-        data.data.data.map((item, index) => ({
-          value: item.code,
-          label: `${item?.name} - ${item?.code}`,
-        }))
-      );
+      const options = response.data.data.map((item) => ({
+        value: item.code,
+        label: `${item.name} - ${item.code}`,
+      }));
+
+      console.log("Mapped options:", options);
+      callback(options);
     } catch (error) {
-      console.log(error.message);
+      console.error("Error fetching options:", error);
+      callback([]);
     }
   };
-  
-  //rerender on filtering
+
+  // API search for second select tag
+  const getCountriesHandlerTwo = async (inputValue, callback) => {
+    try {
+      let response = await axios.get(
+        `${
+          import.meta.env.VITE_SERVER_URL
+        }search/user-get-all-airports?search=${inputValue}`
+      );
+
+      const options = response.data.data.map((item) => ({
+        value: item.code,
+        label: `${item.name} - ${item.code}`,
+      }));
+
+      console.log("Mapped options:", options);
+      callback(options);
+    } catch (error) {
+      console.error("Error fetching options:", error);
+      callback([]);
+    }
+  };
+
+
+  //select tag default value
+  const fetchDefaultOptions = async () => {
+    try {
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_SERVER_URL
+        }search/airport-country-code?countrycode=IN`
+      );
+      const options = response.data.data.map((item) => ({
+        value: item.code,
+        label: `${item.name} - ${item.code}`,
+      }));
+      setDefaultOptions(options);
+    } catch (error) {
+      console.error("Error fetching default options:", error);
+    }
+  };
+
+
+
   useEffect(() => {
-    getCountriesHandler();
+    fetchDefaultOptions();
   }, []);
 
   return (
@@ -128,12 +165,10 @@ const FilterSection = () => {
             </div>
             <div className="w-full ">
               <CustomSelect
-                options={filteredCountryDataOne}
-                // onInputChange={changeFilterValueHandler}
-                onChange={setFormValue}
+                loadOptions={getCountriesHandlerOne}
                 placeholder="Where From ?"
                 icon={<RiFlightTakeoffFill />}
-                formValue={formValue}
+                defaultOptions={defaultOptions}
               />
             </div>
           </div>
@@ -146,8 +181,9 @@ const FilterSection = () => {
             </div>
             <div className="w-full">
               <CustomSelect
-                options={filteredCountryDataTwo}
+                loadOptions={getCountriesHandlerTwo}
                 placeholder="Where To ?"
+                defaultOptions={defaultOptions}
               />
             </div>
           </div>
