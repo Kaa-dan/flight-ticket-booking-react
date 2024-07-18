@@ -34,7 +34,7 @@ const FilterSection = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
-  //changing type-of-travel to dynamicaly changing the ui
+  //changing type-of-travel 
   const handleTypeOfTravelChange = (type) => {
     setTypeOfTravel(type);
   };
