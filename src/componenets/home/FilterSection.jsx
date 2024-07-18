@@ -34,7 +34,7 @@ const FilterSection = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
-  //changing type-of-travel 
+  //changing type-of-travel
   const handleTypeOfTravelChange = (type) => {
     setTypeOfTravel(type);
   };
@@ -89,7 +89,6 @@ const FilterSection = () => {
     }
   };
 
-
   //select tag default value
   const fetchDefaultOptions = async () => {
     try {
@@ -107,8 +106,6 @@ const FilterSection = () => {
       console.error("Error fetching default options:", error);
     }
   };
-
-
 
   useEffect(() => {
     fetchDefaultOptions();
@@ -198,6 +195,7 @@ const FilterSection = () => {
                 onChange={(date) => setStartDate(date)}
                 customInput={<CustomInput CustomIcon={MdOutlineDateRange} />}
                 dateFormat="dd-MM-yyyy"
+                minDate={new Date()}
               />
               {typeOfTravel !== "multi-city" ? (
                 <>

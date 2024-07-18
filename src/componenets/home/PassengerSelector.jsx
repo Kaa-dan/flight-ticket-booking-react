@@ -35,7 +35,7 @@ const PassengerSelector = ({ onClose }) => {
           </button>
         ))}
       </div>
-    );
+    ); 
   };
 
   return (
