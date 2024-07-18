@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import axios from "axios";
 // icons
 import { RiFlightTakeoffFill } from "react-icons/ri";
 import { RiFlightLandLine } from "react-icons/ri";
@@ -17,60 +17,65 @@ import MultiCityForm from "../util/MultiCityForm";
 import Modal from "../util/CustomModal";
 import "react-datepicker/dist/react-datepicker.css";
 
-//json data for countries and country code
-import data from "../util/static-data/cities.json";
-
 const FilterSection = () => {
-  //JSON data for all country codes
-  const [allCountryData, setAllCountryData] = useState(data);
+  // select-tag country data
+  const [filteredCountryDataOne, setFilteredCountryDataOne] = useState([]);
+  const [filteredCountryDataTwo, setFilteredCountryDataTwo] = useState([]);
+
+  //filter state for country code
+
+  const [countryCodeone, setCountryCodeOne] = useState("IN");
+  const [countryCodeTwo, setCountryCodeTwo] = useState("IN");
+
 
   const [formValue, setFormValue] = useState("");
-  console.log("stateValue", formValue);
-  // state for filteration
-
-  const [typeOfTravel, setTypeOfTravel] = useState("one-way");
-  const [countryCode, setCountryCode] = useState([]);
-  const [filteredCountryCode, setFilteredCountryCode] = useState("IN");
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
 
   //state for modal
   const [modalIsOpen, setModelIsOpen] = useState(false);
 
-  //changing type-of-travel to dynamicaly changing the ui
+  // state for filteration
+  const [typeOfTravel, setTypeOfTravel] = useState("one-way");
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
+  //changing type-of-travel to dynamicaly changing the ui
   const handleTypeOfTravelChange = (type) => {
     setTypeOfTravel(type);
   };
 
-  //function for filtering and getting the country code
-  const filterCountryCode = (filter) => {
-    console.log("calling filter function");
-    setFilteredCountryCode(filter);
-    const codes = allCountryData.Airport.filter(
-      (value) => value.countrycode === filter
-    ).map((item) => ({
-      value: item.code,
-      label: `${item?.name} - ${item?.code}`,
-    }));
-    console.log("code", codes);
-    setCountryCode(() => codes);
-  };
-
-  //handler for changing country code
-  const changeFilterValueHandler = (value) => {
-    console.log("valuefromSElect", value);
-    setFilteredCountryCode(value);
-  };
-
-  //rerender on filtering
-  useEffect(() => {
-    filterCountryCode(filteredCountryCode);
-  }, [filteredCountryCode]);
-
+  // modal
   const openModalHandler = () => {
     setModelIsOpen(true);
   };
+
+  // API search
+  const getCountriesHandler = async () => {
+    try {
+      const data = await axios.get(
+        `${import.meta.env.VITE_SERVER_URL}/search/user-get-all-airports`
+      );
+
+      setFilteredCountryDataOne(
+        data.data.data.map((item, index) => ({
+          value: item.code,
+          label: `${item?.name} - ${item?.code}`,
+        }))
+      );
+      setFilteredCountryDataTwo(
+        data.data.data.map((item, index) => ({
+          value: item.code,
+          label: `${item?.name} - ${item?.code}`,
+        }))
+      );
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  
+  //rerender on filtering
+  useEffect(() => {
+    getCountriesHandler();
+  }, []);
 
   return (
     <div className=" h-full    rounded-xl mx-auto shadow-md border border-gray-200 flex flex-col justify-center px-5 gap-4 max-w-[1900px] min-w-[210px] py-5  xs:w-[90%] relative ">
@@ -123,7 +128,7 @@ const FilterSection = () => {
             </div>
             <div className="w-full ">
               <CustomSelect
-                options={countryCode}
+                options={filteredCountryDataOne}
                 // onInputChange={changeFilterValueHandler}
                 onChange={setFormValue}
                 placeholder="Where From ?"
@@ -140,7 +145,10 @@ const FilterSection = () => {
               <RiFlightLandLine className=" text-2xl md:text-3xl " />
             </div>
             <div className="w-full">
-              <CustomSelect options={countryCode} placeholder="Where To ?" />
+              <CustomSelect
+                options={filteredCountryDataTwo}
+                placeholder="Where To ?"
+              />
             </div>
           </div>
         </div>
@@ -235,7 +243,7 @@ const FilterSection = () => {
             </select>
           </div>
           <div className="flex gap-2 p-1 w-full items-center md:w-1/3  ">
-            <label for="">Direct flights</label>
+            <label>Direct flights</label>
             <input type="checkbox" className="h-4 w-4" />
           </div>
         </div>
