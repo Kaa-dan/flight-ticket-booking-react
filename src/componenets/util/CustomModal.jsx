@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 // Set the app element for accessibility
 Modal.setAppElement("#root");
 
-const CustomModal = ({ modalIsOpen, setModelIsOpen }) => {
+const CustomModal = ({ modalIsOpen, setModelIsOpen, formData ,setFormData }) => {
   // state for getting screen size
   const [screenSize, setScreenSize] = useState();
 
@@ -74,7 +74,11 @@ const CustomModal = ({ modalIsOpen, setModelIsOpen }) => {
       isOpen={modalIsOpen}
       onRequestClose={() => setModelIsOpen(false)}
     >
-      <PassengerSelector onClose={() => setModelIsOpen(false)} />
+      <PassengerSelector
+        formData={formData}
+        onClose={() => setModelIsOpen(false)}
+        setFormData={setFormData}
+      />
     </Modal>
   );
 };

@@ -15,12 +15,32 @@ import DatePicker from "react-datepicker";
 import CustomSelect from "../util/CustomSelect";
 import MultiCityForm from "../util/MultiCityForm";
 import Modal from "../util/CustomModal";
+import ReactToast from "../util/ReactToast";
+
 import "react-datepicker/dist/react-datepicker.css";
+import { toast } from "react-toastify";
 
 const FilterSection = () => {
-  // select-tag country data
-  const [filteredCountryDataOne, setFilteredCountryDataOne] = useState([]);
-  const [filteredCountryDataTwo, setFilteredCountryDataTwo] = useState([]);
+  const [formData, setFormData] = useState({
+    cabinClass: "ECONOMY",
+
+    ADULT: "1",
+    CHILD: "0",
+    INFANT: "0",
+
+    fromCityOrAirport: {
+      code: "",
+    },
+    toCityOrAirport: {
+      code: "",
+    },
+    travelDate: new Date(),
+
+    isDirectFlight: true,
+    isConnectingFlight: false,
+  });
+
+  console.log(formData);
 
   //filter state for country code
   const [countryCodeone, setCountryCodeOne] = useState("IN");
@@ -42,6 +62,23 @@ const FilterSection = () => {
   // modal
   const openModalHandler = () => {
     setModelIsOpen(true);
+  };
+
+  //set country code where from
+  const setContryCodeFrom = (value) => {
+    setFormData((prev) => ({ ...prev, fromCityOrAirport: value }));
+  };
+
+  //set country code where to
+  const setContryCodeTo = (value) => {
+    if (formData.fromCityOrAirport === value) {
+      ReactToast("can't select same city from");
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        toCityOrAirport: value,
+      }));
+    }
   };
 
   // API search for first select tag
@@ -107,6 +144,11 @@ const FilterSection = () => {
     }
   };
 
+  const submitHandler = async () => {
+    try {
+    } catch (error) {}
+  };
+
   useEffect(() => {
     fetchDefaultOptions();
   }, []);
@@ -165,6 +207,7 @@ const FilterSection = () => {
                 loadOptions={getCountriesHandlerOne}
                 placeholder="Where From ?"
                 icon={<RiFlightTakeoffFill />}
+                setFormData={setContryCodeFrom}
                 defaultOptions={defaultOptions}
               />
             </div>
@@ -178,6 +221,7 @@ const FilterSection = () => {
             </div>
             <div className="w-full">
               <CustomSelect
+                setFormData={setContryCodeTo}
                 loadOptions={getCountriesHandlerTwo}
                 placeholder="Where To ?"
                 defaultOptions={defaultOptions}
@@ -191,11 +235,17 @@ const FilterSection = () => {
           <div className="  rounded   flex items-center border md:w-1/2  py-2 ">
             <div className=" flex items-center justify-center md:justify-evenly   w-full">
               <DatePicker
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
+                selected={formData.travelDate}
+                onChange={(date) =>
+                  setFormData((prevState) => ({
+                    ...prevState,
+                    travelDate: date,
+                  }))
+                }
                 customInput={<CustomInput CustomIcon={MdOutlineDateRange} />}
                 dateFormat="dd-MM-yyyy"
                 minDate={new Date()}
+                value={formData.travelDate}
               />
               {typeOfTravel !== "multi-city" ? (
                 <>
@@ -211,8 +261,8 @@ const FilterSection = () => {
                   <FaTimes
                     className="text-transparent cursor-pointer"
                     onClick={() => {
-                      // setStartDate(null);
-                      // setEndDate(null);
+                      setStartDate(null);
+                      setEndDate(null);
                     }}
                   />
                 </>
@@ -278,11 +328,26 @@ const FilterSection = () => {
           </div>
           <div className="flex gap-2 p-1 w-full items-center md:w-1/3  ">
             <label>Direct flights</label>
-            <input type="checkbox" className="h-4 w-4" />
+            <input
+              type="checkbox"
+              //state change
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  isDirectFlight: e.target.checked,
+                }))
+              }
+              checked={formData?.isDirectFlight}
+              className="h-4 w-4"
+            />
           </div>
         </div>
         <div className="w-full md:w-1/4 items-start  flex  md:justify-center ">
-          <button className=" flex items-center  space-x-2  text-white bg-[#1F61BC] p-3 rounded">
+          <button
+            // form submition
+            onClick={submitHandler}
+            className=" flex items-center  space-x-2  text-white bg-[#1F61BC] p-3 rounded"
+          >
             <FaTelegramPlane className="text-white text-lg" />
             <span>Search Flights</span>
           </button>
@@ -291,7 +356,12 @@ const FilterSection = () => {
 
       {/* {custom-modal} */}
 
-      <Modal modalIsOpen={modalIsOpen} setModelIsOpen={setModelIsOpen} />
+      <Modal
+        formData={formData}
+        setFormData={setFormData}
+        modalIsOpen={modalIsOpen}
+        setModelIsOpen={setModelIsOpen}
+      />
     </div>
   );
 };

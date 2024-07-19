@@ -16,7 +16,13 @@ const CustomPlaceholder = ({ icon, text }) => (
   </div>
 );
 
-const CustomSelect = ({ placeholder, icon, loadOptions, defaultOptions }) => {
+const CustomSelect = ({
+  placeholder,
+  icon,
+  loadOptions,
+  defaultOptions,
+  setFormData,
+}) => {
   return (
     <AsyncSelect
       isClearable={true}
@@ -24,6 +30,9 @@ const CustomSelect = ({ placeholder, icon, loadOptions, defaultOptions }) => {
       placeholder={<CustomPlaceholder icon={icon} text={placeholder} />}
       defaultOptions={defaultOptions}
       loadOptions={loadOptions}
+      onChange={(value) => {
+        if (value) setFormData(value.value);
+      }}
       components={{
         IndicatorSeparator: () => null,
       }}
