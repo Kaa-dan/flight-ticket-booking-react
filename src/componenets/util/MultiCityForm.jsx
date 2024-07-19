@@ -2,19 +2,43 @@ import DynamicForm from "./DynamicForm";
 
 import { useState } from "react";
 
-const MultiCityForm = () => {
+const MultiCityForm = ({
+  getCountriesHandlerOne,
+  getCountriesHandlerTwo,
+  defaultOptions,
+  
+}) => {
   //state for dynamically rendering form elements
   const [numberOfElements, setNumberOfElements] = useState([DynamicForm]);
 
+  const [formData, setFormData] = useState([
+    { fromCity: "", toCity: "", travelDate: new Date() },
+  ]);
+  // const dynamicFormIncreseHandler = () => {
+
+  //   setNumberOfElements((prev) => [...prev, DynamicForm]);
+  // };
   const dynamicFormIncreseHandler = () => {
-    setNumberOfElements((prev) => [...prev, DynamicForm]);
+    if (formData.length < 5) {
+      setFormData((prev) => [
+        ...prev,
+        { fromCity: "", toCity: "", travelDate: new Date() },
+      ]);
+    } else {
+      alert("Maximum of 5 forms allowed");
+    }
   };
 
   return (
     <div className="flex bg-[#ffffff]  flex-col lg:flex-row  w-full  gap-2 ">
       <div className="  lg:w-[75%] flex flex-col gap-3  ">
         {numberOfElements.map((Value) => (
-          <Value />
+          <Value
+            defaultOptions={defaultOptions}
+            getCountriesHandlerOne={getCountriesHandlerOne}
+            getCountriesHandlerTwo={getCountriesHandlerTwo}
+            formData={formData}
+          />
         ))}
       </div>
 

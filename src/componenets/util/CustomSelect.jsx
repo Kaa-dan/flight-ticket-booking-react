@@ -32,6 +32,7 @@ const CustomSelect = ({
       loadOptions={loadOptions}
       onChange={(value) => {
         if (value) setFormData(value.value);
+        else setFormData("");
       }}
       components={{
         IndicatorSeparator: () => null,

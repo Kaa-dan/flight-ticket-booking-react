@@ -1,34 +1,24 @@
 import React, { useState } from "react";
 
 //icons
-import { FaTimes } from "react-icons/fa";
 import { RiFlightLandLine, RiFlightTakeoffFill } from "react-icons/ri";
 import { MdOutlineDateRange } from "react-icons/md";
 
-// libraries 
+// libraries
 import DatePicker from "react-datepicker";
 
-// custom components 
+// custom components
 import CustomInput from "./DatePickerCustom";
 import CustomSelect from "./CustomSelect";
 
-
-
-const DynamicForm = () => {
-  const [typeOfTravel, setTypeOfTravel] = useState("one-way");
-
+const DynamicForm = ({
+  defaultOptions,
+  getCountriesHandlerOne,
+  getCountriesHandlerTwo,
+  formData
+}) => {
   const [startDate, setStartDate] = useState(new Date());
 
-  
-  const [endDate, setEndDate] = useState(new Date());
-
-
-  const [dummyData, setDummyData] = useState([
-    { value: "nithin", label: "nithin" },
-    { value: "nithin", label: "nithin" },
-    { value: "nithin", label: "nithin" },
-    { value: "nithi", label: "nithi" },
-  ]);
   return (
     <div
       className="flex flex-col  p-3 md:p-0  md:flex-row justify-between relative 
@@ -40,7 +30,8 @@ const DynamicForm = () => {
         </div>
         <div className="w-full ">
           <CustomSelect
-            options={dummyData}
+            loadOptions={getCountriesHandlerOne}
+            defaultOptions={defaultOptions}
             placeholder="Where From ?"
             icon={<RiFlightTakeoffFill />}
           />
@@ -53,9 +44,9 @@ const DynamicForm = () => {
         </div>
         <div className="w-full">
           <CustomSelect
-            options={dummyData}
+            loadOptions={getCountriesHandlerTwo}
+            defaultOptions={defaultOptions}
             placeholder="Where To ?"
-            // icon={<RiFlightLandLine />}
           />
         </div>
       </div>
@@ -68,28 +59,6 @@ const DynamicForm = () => {
               customInput={<CustomInput CustomIcon={MdOutlineDateRange} />}
               dateFormat="dd-MM-yyyy"
             />
-            {typeOfTravel !== "multi-city" ? (
-              <>
-                {" "}
-                <span className="">|</span>
-                <DatePicker
-                  selected={endDate}
-                  onChange={(date) => setEndDate(date)}
-                  customInput={<CustomInput />}
-                  dateFormat="dd-MM-yyyy"
-                  disabled={typeOfTravel !== "round-trip"}
-                />
-                <FaTimes
-                  className="text-transparent   cursor-pointer"
-                  onClick={() => {
-                    // setStartDate(null);
-                    // setEndDate(null);
-                  }}
-                />
-              </>
-            ) : (
-              <div className="p-2 md:w-[40%] "></div>
-            )}
           </div>
         </div>
       </div>

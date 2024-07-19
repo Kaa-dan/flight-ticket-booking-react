@@ -18,8 +18,8 @@ import Modal from "../util/CustomModal";
 import ReactToast from "../util/ReactToast";
 
 import "react-datepicker/dist/react-datepicker.css";
-import { toast } from "react-toastify";
 
+import formatDate from "../util/DateFormatChanger";
 const FilterSection = () => {
   const [formData, setFormData] = useState({
     cabinClass: "ECONOMY",
@@ -35,9 +35,11 @@ const FilterSection = () => {
       code: "",
     },
     travelDate: new Date(),
+    returnDate: new Date(),
 
     isDirectFlight: true,
-    isConnectingFlight: false,
+    isConnectingFlight: true,
+    pft: "REGULAR",
   });
 
   console.log(formData);
@@ -51,8 +53,6 @@ const FilterSection = () => {
 
   // state for filteration
   const [typeOfTravel, setTypeOfTravel] = useState("one-way");
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
 
   //changing type-of-travel
   const handleTypeOfTravelChange = (type) => {
@@ -146,7 +146,86 @@ const FilterSection = () => {
 
   const submitHandler = async () => {
     try {
-    } catch (error) {}
+      let query;
+      console.log("clicked");
+      if (typeOfTravel === "one-way") {
+        query = {
+          searchQuery: {
+            cabinClass: formData.cabinClass,
+            paxInfo: {
+              ADULT: formData.ADULT,
+              CHILD: formData.CHILD,
+              INFANT: formData.INFANT,
+            },
+
+            routeInfos: [
+              {
+                fromCityOrAirport: {
+                  code: formData.fromCityOrAirport,
+                },
+                toCityOrAirport: {
+                  code: formData.toCityOrAirport,
+                },
+                travelDate: formatDate(formData.travelDate),
+              },
+            ],
+            searchModifiers: {
+              isDirectFlight: formData.isDirectFlight,
+              isConnectingFlight: formData.isConnectingFlight,
+            },
+          },
+        };
+      } else if (typeOfTravel === "round-trip")
+        query = {
+          searchQuery: {
+            cabinClass: formData.cabinClass,
+            paxInfo: {
+              ADULT: formData.ADULT,
+              CHILD: formData.CHILD,
+              INFANT: formData.INFANT,
+            },
+
+            routeInfos: [
+              {
+                fromCityOrAirport: {
+                  code: formData.fromCityOrAirport,
+                },
+                toCityOrAirport: {
+                  code: formData.toCityOrAirport,
+                },
+                travelDate: formatDate(formData.travelDate),
+              },
+              {
+                fromCityOrAirport: {
+                  code: formData.toCityOrAirport,
+                },
+                toCityOrAirport: {
+                  code: formData.fromCityOrAirport,
+                },
+                travelDate: formatDate(formData.returnDate),
+              },
+            ],
+            searchModifiers: {
+              isDirectFlight: formData.isDirectFlight,
+              isConnectingFlight: formData.isConnectingFlight,
+            },
+          },
+        };
+
+      const data = await axios.post(
+        `${import.meta.env.VITE_SERVER_URL}search/flight`,
+        query,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("data", data);
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   useEffect(() => {
@@ -236,12 +315,12 @@ const FilterSection = () => {
             <div className=" flex items-center justify-center md:justify-evenly   w-full">
               <DatePicker
                 selected={formData.travelDate}
-                onChange={(date) =>
+                onChange={(date) => {
                   setFormData((prevState) => ({
                     ...prevState,
                     travelDate: date,
-                  }))
-                }
+                  }));
+                }}
                 customInput={<CustomInput CustomIcon={MdOutlineDateRange} />}
                 dateFormat="dd-MM-yyyy"
                 minDate={new Date()}
@@ -252,8 +331,10 @@ const FilterSection = () => {
                   {" "}
                   <span className="">|</span>
                   <DatePicker
-                    selected={endDate}
-                    onChange={(date) => setEndDate(date)}
+                    selected={formData.returnDate}
+                    onChange={(date) => {
+                      setFormData((prev) => ({ ...prev, returnDate: date }));
+                    }}
                     customInput={<CustomInput />}
                     dateFormat="dd-MM-yyyy"
                     disabled={typeOfTravel !== "round-trip"}
@@ -261,8 +342,8 @@ const FilterSection = () => {
                   <FaTimes
                     className="text-transparent cursor-pointer"
                     onClick={() => {
-                      setStartDate(null);
-                      setEndDate(null);
+                      // setStartDate(null);
+                      // setEndDate(null);
                     }}
                   />
                 </>
@@ -288,14 +369,23 @@ const FilterSection = () => {
               <input
                 className="font-bold outline-none "
                 type="text"
-                value={"19 Passenger |First"}
+                value={`${Number(formData.ADULT) + Number(formData.CHILD)} | ${
+                  formData.cabinClass
+                }`}
                 readOnly
               />
             </div>
           </div>
         </div>
       </div>
-      {typeOfTravel === "multi-city" && <MultiCityForm />}
+      {typeOfTravel === "multi-city" && (
+        <MultiCityForm
+          getCountriesHandlerOne={getCountriesHandlerOne}
+          getCountriesHandlerTwo={getCountriesHandlerTwo}
+          defaultOptions={defaultOptions}
+          formData={formData}
+        />
+      )}
 
       {/* fare type with submit button section  */}
       <div className="w-full md:items-center flex flex-col md:flex-row    h-full  ">
@@ -303,15 +393,22 @@ const FilterSection = () => {
           <div className="md:w-1/3 ">
             <select
               id="fare-type"
-              className="h-full border rounded-md w-full md:w-auto p-2 md:p-1  bg-white"
+              className="h-full outline-none border rounded-md w-full md:w-auto p-2 md:p-1  bg-white"
               name="fare_type"
+              value={formData.pft}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  pft: e.target.value,
+                }))
+              }
             >
               <option disabled selected value="">
                 Fare Type
               </option>
-              <option value="regular">Regular Fares</option>
-              <option value="student">Student Fares</option>
-              <option value="senior">Senior Citizen Fares</option>
+              <option value="REGULAR">Regular Fares</option>
+              <option value="STUDENT">Student Fares</option>
+              <option value="SENIOR_CITIZEN">Senior Citizen Fares</option>
             </select>
           </div>
           <div className="lg:w-1/3">
