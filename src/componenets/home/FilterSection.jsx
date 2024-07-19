@@ -42,6 +42,13 @@ const FilterSection = () => {
     pft: "REGULAR",
   });
 
+  // State for dynamically rendering form elements
+  const [dynamicFormData, setDynamicFormData] = useState([
+    { fromCity: "", toCity: "", travelDate: new Date() },
+  ]);
+
+  const [Loading,setLoading]=useState(false)
+
   console.log(formData);
 
   //filter state for country code
@@ -147,7 +154,7 @@ const FilterSection = () => {
   const submitHandler = async () => {
     try {
       let query;
-      console.log("clicked");
+
       if (typeOfTravel === "one-way") {
         query = {
           searchQuery: {
@@ -175,7 +182,7 @@ const FilterSection = () => {
             },
           },
         };
-      } else if (typeOfTravel === "round-trip")
+      } else if (typeOfTravel === "round-trip") {
         query = {
           searchQuery: {
             cabinClass: formData.cabinClass,
@@ -211,7 +218,47 @@ const FilterSection = () => {
             },
           },
         };
+      } else {
+        const dynamic = dynamicFormData.map((value) => ({
+          fromCityOrAirport: {
+            code: value.fromCity,
+          },
+          toCityOrAirport: {
+            code: value.toCity,
+          },
+          travelDate: formatDate(value.travelDate),
+        }));
 
+        query = {
+          searchQuery: {
+            cabinClass: formData.cabinClass,
+            paxInfo: {
+              ADULT: formData.ADULT,
+              CHILD: formData.CHILD,
+              INFANT: formData.INFANT,
+            },
+
+            routeInfos: [
+              {
+                fromCityOrAirport: {
+                  code: formData.fromCityOrAirport,
+                },
+                toCityOrAirport: {
+                  code: formData.toCityOrAirport,
+                },
+                travelDate: formatDate(formData.travelDate),
+              },
+              ...dynamic,
+            ],
+            searchModifiers: {
+              isDirectFlight: formData.isDirectFlight,
+              isConnectingFlight: formData.isConnectingFlight,
+            },
+          },
+        };
+      }
+      console.log("query", query);
+      setLoading(true)
       const data = await axios.post(
         `${import.meta.env.VITE_SERVER_URL}search/flight`,
         query,
@@ -221,9 +268,10 @@ const FilterSection = () => {
           },
         }
       );
-
-      console.log("data", data);
+      setLoading(false)
+      console.log("data", data.data);
     } catch (error) {
+      setLoading(false)
       console.log(error.message);
     }
   };
@@ -383,7 +431,8 @@ const FilterSection = () => {
           getCountriesHandlerOne={getCountriesHandlerOne}
           getCountriesHandlerTwo={getCountriesHandlerTwo}
           defaultOptions={defaultOptions}
-          formData={formData}
+          formData={dynamicFormData}
+          setFormData={setDynamicFormData}
         />
       )}
 
@@ -441,12 +490,13 @@ const FilterSection = () => {
         </div>
         <div className="w-full md:w-1/4 items-start  flex  md:justify-center ">
           <button
+          disabled={Loading}
             // form submition
             onClick={submitHandler}
             className=" flex items-center  space-x-2  text-white bg-[#1F61BC] p-3 rounded"
           >
             <FaTelegramPlane className="text-white text-lg" />
-            <span>Search Flights</span>
+            <span>{Loading ?"Searching...":"Search Flights"}</span>
           </button>
         </div>
       </div>

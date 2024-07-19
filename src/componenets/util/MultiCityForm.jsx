@@ -1,23 +1,15 @@
 import DynamicForm from "./DynamicForm";
-
 import { useState } from "react";
+import ReactToast from "./ReactToast";
 
 const MultiCityForm = ({
   getCountriesHandlerOne,
   getCountriesHandlerTwo,
   defaultOptions,
-  
+  formData,
+  setFormData,
 }) => {
-  //state for dynamically rendering form elements
-  const [numberOfElements, setNumberOfElements] = useState([DynamicForm]);
-
-  const [formData, setFormData] = useState([
-    { fromCity: "", toCity: "", travelDate: new Date() },
-  ]);
-  // const dynamicFormIncreseHandler = () => {
-
-  //   setNumberOfElements((prev) => [...prev, DynamicForm]);
-  // };
+  console.log("formData", formData);
   const dynamicFormIncreseHandler = () => {
     if (formData.length < 5) {
       setFormData((prev) => [
@@ -25,26 +17,36 @@ const MultiCityForm = ({
         { fromCity: "", toCity: "", travelDate: new Date() },
       ]);
     } else {
-      alert("Maximum of 5 forms allowed");
+      ReactToast("Maximum of 5 forms allowed");
     }
   };
 
+  const handleFormDataChange = (index, data) => {
+    setFormData((prev) => {
+      const newData = [...prev];
+      newData[index] = { ...newData[index], ...data };
+      return newData;
+    });
+  };
+
   return (
-    <div className="flex bg-[#ffffff]  flex-col lg:flex-row  w-full  gap-2 ">
-      <div className="  lg:w-[75%] flex flex-col gap-3  ">
-        {numberOfElements.map((Value) => (
-          <Value
+    <div className="flex bg-[#ffffff] flex-col lg:flex-row w-full gap-2">
+      <div className="lg:w-[75%] flex flex-col gap-3">
+        {formData.map((form, index) => (
+          <DynamicForm
+            key={index}
             defaultOptions={defaultOptions}
             getCountriesHandlerOne={getCountriesHandlerOne}
             getCountriesHandlerTwo={getCountriesHandlerTwo}
-            formData={formData}
+            form={form}
+            setForm={(data) => handleFormDataChange(index, data)}
           />
         ))}
       </div>
 
-      <div className=" flex md:justify-center lg:w-[25%] items-center  md:items-end  ">
+      <div className="flex md:justify-center lg:w-[25%] items-center md:items-end">
         <button
-          className="bg-[#1F61BC] p-3 rounded  text-white"
+          className="bg-[#1F61BC] p-3 rounded text-white"
           onClick={() => dynamicFormIncreseHandler()}
         >
           ADD ONE MORE.
