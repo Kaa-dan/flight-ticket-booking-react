@@ -15,8 +15,9 @@ const PassengerSelector = ({ onClose, formData, setFormData }) => {
           "you can only book 9 seats and number of infant must be lower than adult"
         );
     }
+    console.log(type, "type", count, formData.ADULT);
     if (type === "children") {
-      if (formData.ADULT + count <= 9)
+      if (Number(formData.ADULT) + count <= 9)
         setFormData((prev) => ({
           ...prev,
           CHILD: count,

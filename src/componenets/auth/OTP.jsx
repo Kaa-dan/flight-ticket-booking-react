@@ -5,21 +5,19 @@ import { useNavigate } from "react-router-dom";
 
 const OTPInput = ({ value }) => {
   const navigate = useNavigate();
-  const [otp, setOtp] = useState(["", "", "", ""]); // State to store OTP digits
-  const inputsRef = useRef([]); // Ref to store input elements for focus management
+  const [otp, setOtp] = useState(["", "", "", ""]);
+  const inputsRef = useRef([]);
   const [loading, setLoading] = useState(false);
 
-  console.log(otp);
   const handleChange = (e, index) => {
     const value = e.target.value;
 
-    if (/[^0-9]/.test(value)) return; // Allow only numeric input
+    if (/[^0-9]/.test(value)) return;
 
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Focus next input
     if (value && index < 3) {
       inputsRef.current[index + 1].focus();
     }
@@ -27,7 +25,6 @@ const OTPInput = ({ value }) => {
 
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
-      // Focus previous input if backspace is pressed and the current input is empty
       inputsRef.current[index - 1].focus();
     }
   };
@@ -36,26 +33,24 @@ const OTPInput = ({ value }) => {
     const pastedData = e.clipboardData.getData("Text");
     if (/^\d{4}$/.test(pastedData)) {
       setOtp(pastedData.split(""));
-      inputsRef.current[3].focus(); // Focus the last input after paste
+      inputsRef.current[3].focus();
     }
   };
-  const onSubmit = async () => {
-    console.log(value);
-    try {
-      setLoading(() => true);
-      // Join the OTP digits to form the complete OTP string
-      const otpString = otp.join(""); // otp is an array of individual OTP digits
 
-      // Optional: Add client-side validation
+  const onSubmit = async () => {
+    try {
+      setLoading(true);
+
+      const otpString = otp.join("");
+
       if (otpString.length !== 4) {
-        ReactToast("enter otp");
+        ReactToast("Enter OTP");
+        setLoading(false);
         return;
       }
 
-      // Replace with your server URL and endpoint
       const serverUrl = `${import.meta.env.VITE_SERVER_URL}user/verify-otp`;
 
-      // Send OTP to the server for verification
       const response = await axios.post(
         serverUrl,
         {
@@ -68,26 +63,21 @@ const OTPInput = ({ value }) => {
           },
         }
       );
-      setLoading(() => false);
+      setLoading(false);
 
-      // Handle server response
-      if (response) {
-        console.log(response);
-        console.log("OTP verified successfully");
-
+      if (response && response.data) {
         if (response.data.profile === false)
           navigate(`/enter-detail?token=${response.data.token}`);
         else navigate("/");
-        // Redirect or update UI as needed
       } else {
         throw new Error("Invalid OTP");
       }
     } catch (error) {
-      setLoading(() => false);
-      // Handle errors
+      setLoading(false);
       console.log("Error verifying OTP:", error.message);
     }
   };
+
   return (
     <div>
       <div className="flex gap-2 w-full justify-evenly">
@@ -111,7 +101,7 @@ const OTPInput = ({ value }) => {
         </button>
       ) : (
         <button
-          onClick={() => onSubmit()}
+          onClick={onSubmit}
           className="bg-[#007EC4] text-white h-[45px] rounded-md mt-5 w-full"
         >
           Verify OTP

@@ -42,9 +42,9 @@ const Login = () => {
   };
 
   const handleSubmit = async () => {
-    console.log("Phone:", phone);
+    
     try {
-      console.log("Country:", country);
+      
 
       if (!validatePhoneNumber(phone, country.countryCode)) {
         setError("Invalid phone number for the selected country.");
@@ -73,7 +73,7 @@ const Login = () => {
         }
       );
 
-      console.log(data);
+    
       if (data) {
         setLoading(false);
         setStep("otp-sent-success");

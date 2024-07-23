@@ -6,12 +6,12 @@ const MultiCityForm = ({
   getCountriesHandlerOne,
   getCountriesHandlerTwo,
   defaultOptions,
-  formData,
+  dynamicFormData,
   setFormData,
 }) => {
-  console.log("formData", formData);
+  console.log("dynamicFormData", dynamicFormData);
   const dynamicFormIncreseHandler = () => {
-    if (formData.length < 5) {
+    if (dynamicFormData.length < 5) {
       setFormData((prev) => [
         ...prev,
         { fromCity: "", toCity: "", travelDate: new Date() },
@@ -32,7 +32,7 @@ const MultiCityForm = ({
   return (
     <div className="flex bg-[#ffffff] flex-col lg:flex-row w-full gap-2">
       <div className="lg:w-[75%] flex flex-col gap-3">
-        {formData.map((form, index) => (
+        {dynamicFormData.map((form, index) => (
           <DynamicForm
             key={index}
             defaultOptions={defaultOptions}

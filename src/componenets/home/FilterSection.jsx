@@ -47,7 +47,7 @@ const FilterSection = () => {
     { fromCity: "", toCity: "", travelDate: new Date() },
   ]);
 
-  const [Loading,setLoading]=useState(false)
+  const [Loading, setLoading] = useState(false);
 
   console.log(formData);
 
@@ -79,12 +79,16 @@ const FilterSection = () => {
   //set country code where to
   const setContryCodeTo = (value) => {
     if (formData.fromCityOrAirport === value) {
-      ReactToast("can't select same city from");
+      ReactToast("Select different airport");
     } else {
       setFormData((prev) => ({
         ...prev,
         toCityOrAirport: value,
       }));
+      if (typeOfTravel === "multi-city") {
+        console.log("dynamic", dynamicFormData);
+        setDynamicFormData((prev) => ({ ...prev }));
+      }
     }
   };
 
@@ -258,7 +262,7 @@ const FilterSection = () => {
         };
       }
       console.log("query", query);
-      setLoading(true)
+      setLoading(true);
       const data = await axios.post(
         `${import.meta.env.VITE_SERVER_URL}search/flight`,
         query,
@@ -268,10 +272,10 @@ const FilterSection = () => {
           },
         }
       );
-      setLoading(false)
+      setLoading(false);
       console.log("data", data.data);
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       console.log(error.message);
     }
   };
@@ -364,10 +368,17 @@ const FilterSection = () => {
               <DatePicker
                 selected={formData.travelDate}
                 onChange={(date) => {
-                  setFormData((prevState) => ({
-                    ...prevState,
-                    travelDate: date,
-                  }));
+                  console.log("value", date, formData.returnDate);
+
+                  setFormData((prevState) => {
+                    const newState = { ...prevState, travelDate: date };
+
+                    if (date > prevState.returnDate) {
+                      newState.returnDate = date;
+                    }
+
+                    return newState;
+                  });
                 }}
                 customInput={<CustomInput CustomIcon={MdOutlineDateRange} />}
                 dateFormat="dd-MM-yyyy"
@@ -431,7 +442,7 @@ const FilterSection = () => {
           getCountriesHandlerOne={getCountriesHandlerOne}
           getCountriesHandlerTwo={getCountriesHandlerTwo}
           defaultOptions={defaultOptions}
-          formData={dynamicFormData}
+          dynamicFormData={dynamicFormData}
           setFormData={setDynamicFormData}
         />
       )}
@@ -490,13 +501,13 @@ const FilterSection = () => {
         </div>
         <div className="w-full md:w-1/4 items-start  flex  md:justify-center ">
           <button
-          disabled={Loading}
+            disabled={Loading}
             // form submition
             onClick={submitHandler}
             className=" flex items-center  space-x-2  text-white bg-[#1F61BC] p-3 rounded"
           >
             <FaTelegramPlane className="text-white text-lg" />
-            <span>{Loading ?"Searching...":"Search Flights"}</span>
+            <span>{Loading ? "Searching..." : "Search Flights"}</span>
           </button>
         </div>
       </div>
