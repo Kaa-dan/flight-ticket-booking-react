@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-//icons
+// icons
 import { RiFlightLandLine, RiFlightTakeoffFill } from "react-icons/ri";
 import { MdOutlineDateRange } from "react-icons/md";
 // libraries
@@ -12,14 +12,50 @@ const DynamicForm = ({
   defaultOptions,
   getCountriesHandlerOne,
   getCountriesHandlerTwo,
-  form,
   setForm,
+  dynamicFormData,
+  index,
+  formData,
+  setDynamicFormData,
 }) => {
-  const [startDate, setStartDate] = useState(new Date());
+  console.log("dynamicFormdata", dynamicFormData);
+  console.log("formDate", formData);
+
+  const [startDate, setStartDate] = useState(() =>
+    index === 0 ? formData.travelDate : dynamicFormData[index]?.travelDate
+  );
+
+  console.log("startDate", startDate, index);
 
   useEffect(() => {
-    setForm({ travelDate: startDate });
-  }, [startDate]);
+    if (index === 0 && formData.travelDate > startDate) {
+      setStartDate(formData.travelDate);
+    } else if (index > 0 &&dynamicFormData[index].travelDate>startDate) {
+      setStartDate(dynamicFormData[index]?.travelDate);
+    }
+  }, [index, formData.travelDate, dynamicFormData]);
+
+  const handleDateChange = (date) => {
+    setStartDate(date);
+    setForm((prevState) => {
+      const newState = { ...prevState, travelDate: date };
+      if (date > prevState.returnDate) {
+        newState.returnDate = date;
+      }
+      return newState;
+    });
+
+    setDynamicFormData((prevState) => {
+      const newState = [...prevState];
+      if (index + 1 < newState.length) {
+        newState[index + 1] = {
+          ...newState[index + 1],
+          travelDate: date,
+        };
+      }
+      return newState;
+    });
+  };
 
   return (
     <div className="flex flex-col p-3 md:p-0 md:flex-row justify-between relative border border-slate-400 rounded-lg gap-2 md:border-none">
@@ -33,7 +69,9 @@ const DynamicForm = ({
             defaultOptions={defaultOptions}
             placeholder="Where From ?"
             icon={<RiFlightTakeoffFill />}
-            setFormData={(value) => setForm({ fromCity: value })}
+            setFormData={(value) =>
+              setForm((prevState) => ({ ...prevState, fromCity: value }))
+            }
           />
         </div>
       </div>
@@ -47,7 +85,9 @@ const DynamicForm = ({
             loadOptions={getCountriesHandlerTwo}
             defaultOptions={defaultOptions}
             placeholder="Where To ?"
-            setFormData={(value) => setForm({ toCity: value })}
+            setFormData={(value) =>
+              setForm((prevState) => ({ ...prevState, toCity: value }))
+            }
           />
         </div>
       </div>
@@ -57,7 +97,8 @@ const DynamicForm = ({
           <div className="flex items-center justify-between w-full">
             <DatePicker
               selected={startDate}
-              onChange={(date) => setStartDate(date)}
+              minDate={startDate}
+              onChange={handleDateChange}
               customInput={<CustomInput CustomIcon={MdOutlineDateRange} />}
               dateFormat="dd-MM-yyyy"
             />

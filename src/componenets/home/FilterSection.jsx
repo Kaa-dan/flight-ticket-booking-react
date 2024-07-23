@@ -44,12 +44,12 @@ const FilterSection = () => {
 
   // State for dynamically rendering form elements
   const [dynamicFormData, setDynamicFormData] = useState([
-    { fromCity: "", toCity: "", travelDate: new Date() },
+    { fromCity: "", toCity: "", travelDate: formData.travelDate },
   ]);
 
   const [Loading, setLoading] = useState(false);
 
-  console.log(formData);
+
 
   //filter state for country code
   const [countryCodeone, setCountryCodeOne] = useState("IN");
@@ -86,8 +86,8 @@ const FilterSection = () => {
         toCityOrAirport: value,
       }));
       if (typeOfTravel === "multi-city") {
-        console.log("dynamic", dynamicFormData);
-        setDynamicFormData((prev) => ({ ...prev }));
+        
+        // setDynamicFormData((prev) => ({ ...prev }));
       }
     }
   };
@@ -107,7 +107,7 @@ const FilterSection = () => {
         label: `${item.name} - ${item.code}`,
       }));
 
-      console.log("Mapped options:", options);
+      
       callback(options);
     } catch (error) {
       console.error("Error fetching options:", error);
@@ -261,7 +261,7 @@ const FilterSection = () => {
           },
         };
       }
-      console.log("query", query);
+     
       setLoading(true);
       const data = await axios.post(
         `${import.meta.env.VITE_SERVER_URL}search/flight`,
@@ -273,7 +273,7 @@ const FilterSection = () => {
         }
       );
       setLoading(false);
-      console.log("data", data.data);
+   
     } catch (error) {
       setLoading(false);
       console.log(error.message);
@@ -368,7 +368,7 @@ const FilterSection = () => {
               <DatePicker
                 selected={formData.travelDate}
                 onChange={(date) => {
-                  console.log("value", date, formData.returnDate);
+                  
 
                   setFormData((prevState) => {
                     const newState = { ...prevState, travelDate: date };
@@ -443,7 +443,8 @@ const FilterSection = () => {
           getCountriesHandlerTwo={getCountriesHandlerTwo}
           defaultOptions={defaultOptions}
           dynamicFormData={dynamicFormData}
-          setFormData={setDynamicFormData}
+          setDynamicFormData={setDynamicFormData}
+          formData={formData}
         />
       )}
 
