@@ -13,48 +13,17 @@ const DynamicForm = ({
   getCountriesHandlerOne,
   getCountriesHandlerTwo,
   setForm,
-  dynamicFormData,
-  index,
-  formData,
-  setDynamicFormData,
+
+  form,
 }) => {
-  console.log("dynamicFormdata", dynamicFormData);
-  console.log("formDate", formData);
-
-  const [startDate, setStartDate] = useState(() =>
-    index === 0 ? formData.travelDate : dynamicFormData[index]?.travelDate
-  );
-
-  console.log("startDate", startDate, index);
+  const [startDate, setStartDate] = useState(new Date());
 
   useEffect(() => {
-    if (index === 0 && formData.travelDate > startDate) {
-      setStartDate(formData.travelDate);
-    } else if (index > 0 &&dynamicFormData[index].travelDate>startDate) {
-      setStartDate(dynamicFormData[index]?.travelDate);
-    }
-  }, [index, formData.travelDate, dynamicFormData]);
+    setForm({ travelDate: startDate });
+  }, [startDate]);
 
   const handleDateChange = (date) => {
-    setStartDate(date);
-    setForm((prevState) => {
-      const newState = { ...prevState, travelDate: date };
-      if (date > prevState.returnDate) {
-        newState.returnDate = date;
-      }
-      return newState;
-    });
-
-    setDynamicFormData((prevState) => {
-      const newState = [...prevState];
-      if (index + 1 < newState.length) {
-        newState[index + 1] = {
-          ...newState[index + 1],
-          travelDate: date,
-        };
-      }
-      return newState;
-    });
+    setForm();
   };
 
   return (
@@ -97,8 +66,7 @@ const DynamicForm = ({
           <div className="flex items-center justify-between w-full">
             <DatePicker
               selected={startDate}
-              minDate={startDate}
-              onChange={handleDateChange}
+              onChange={(date) => setStartDate(date)}
               customInput={<CustomInput CustomIcon={MdOutlineDateRange} />}
               dateFormat="dd-MM-yyyy"
             />

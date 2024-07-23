@@ -8,14 +8,24 @@ const MultiCityForm = ({
   defaultOptions,
   dynamicFormData,
   setDynamicFormData,
-  formData,
+  
 }) => {
+ 
   const dynamicFormIncreseHandler = () => {
     if (dynamicFormData.length < 5) {
-      setDynamicFormData((prev) => [
-        ...prev,
-        { fromCity: "", toCity: "", travelDate: new Date() },
-      ]);
+      setDynamicFormData((prev) => {
+        let travelDate = new Date();
+
+       
+        return [
+          ...prev,
+          {
+            fromCity: "",
+            toCity: "",
+            travelDate: travelDate,
+          },
+        ];
+      });
     } else {
       ReactToast("Maximum of 5 forms allowed");
     }
@@ -36,14 +46,15 @@ const MultiCityForm = ({
           <DynamicForm
             key={index}
             dynamicFormData={dynamicFormData}
-            index={index}
+     
             defaultOptions={defaultOptions}
             getCountriesHandlerOne={getCountriesHandlerOne}
             getCountriesHandlerTwo={getCountriesHandlerTwo}
             form={form}
             setForm={(data) => handleFormDataChange(index, data)}
-            formData={formData}
-           setDynamicFormData={setDynamicFormData}
+         
+          
+         
           />
         ))}
       </div>
