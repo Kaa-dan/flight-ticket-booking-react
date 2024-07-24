@@ -7,6 +7,7 @@ import DatePicker from "react-datepicker";
 // custom components
 import CustomInput from "./DatePickerCustom";
 import CustomSelect from "./CustomSelect";
+import axios from "axios";
 
 const DynamicForm = ({
   defaultOptions,
@@ -16,27 +17,18 @@ const DynamicForm = ({
   formData,
   form,
   dateDynamic,
+  cityDynamic,
 }) => {
   const [startDate, setStartDate] = useState(dateDynamic);
-  console.log(dateDynamic, "");
 
-  // const changeDate = (date) => {
-  //   if (date) {
-  //     setStartDate(date);
-  //     console.log("------------------------------date");
-  //   } else {
-  //     setStartDate(dateDynamic);
-  //     console.log("------------------------------noDAte");
-  //   }
-  // };
   useEffect(() => {
     setForm({ travelDate: startDate });
   }, [startDate]);
+
   useEffect(() => {
     setStartDate(() => dateDynamic);
     setForm({ travelDate: startDate });
   }, [dateDynamic]);
-
 
   return (
     <div className="flex flex-col p-3 md:p-0 md:flex-row justify-between relative border border-slate-400 rounded-lg gap-2 md:border-none">
