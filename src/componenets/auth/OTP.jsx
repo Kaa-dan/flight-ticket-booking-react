@@ -2,12 +2,15 @@ import React, { useState, useRef } from "react";
 import ReactToast from "../util/ReactToast";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { setToken } from "../../application/slices/aut.slice";
+import { useDispatch } from "react-redux";
 
 const OTPInput = ({ value }) => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState(["", "", "", ""]);
   const inputsRef = useRef([]);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const handleChange = (e, index) => {
     const value = e.target.value;
@@ -64,6 +67,7 @@ const OTPInput = ({ value }) => {
         }
       );
       setLoading(false);
+      dispatch(setToken(response.data.token));
 
       if (response && response.data) {
         if (response.data.profile === false)

@@ -66,8 +66,11 @@ const MultiCityForm = ({
       </div>
 
       <div className="flex md:justify-start gap-4 lg:w-[25%] items-center md:items-end justify-between ">
-        <button className="flex p-3 justify-center items-center bg-red-500 text-white rounded-md cursor-pointer">
-          <MdOutlineClear size={"23px"} onClick={removeLastFormHandler} />
+        <button
+          className="flex p-3 justify-center items-center bg-red-500 text-white rounded-md cursor-pointer"
+          onClick={removeLastFormHandler}
+        >
+          <MdOutlineClear size={"23px"} />
         </button>
         <button
           className="bg-[#1F61BC] p-3 rounded text-white"

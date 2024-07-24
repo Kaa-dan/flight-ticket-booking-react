@@ -1,12 +1,14 @@
 import main_logo from "../../assets/home/logo/main_logo.png";
 import { useState } from "react";
 import { FiMenu } from "react-icons/fi";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
-
+  const { token } = useSelector((state) => state.auth);
+  console.log({ token });
   const handleNavigate = (path) => {
     setMenuOpen(false);
     navigate(path);
@@ -26,18 +28,27 @@ const Header = () => {
           </h3>
         </div>
         <div className="hidden md:flex gap-6 font-semibold 2xl:text-[1.2rem]">
-          <button
-            className="h-[55px] 2xl:p-2 text-white bg-black rounded-lg w-28"
-            onClick={() => handleNavigate("/sign-in")}
-          >
-            Login
-          </button>
+          {token ? (
+            <button
+              className="h-[55px] 2xl:p-2 text-white bg-black rounded-lg w-28"
+              // onClick={() => handleNavigate("/sign-in")}
+            >
+              Log out
+            </button>
+          ) : (
+            <button
+              className="h-[55px] 2xl:p-2 text-white bg-black rounded-lg w-28"
+              onClick={() => handleNavigate("/sign-in")}
+            >
+              Login
+            </button>
+          )}
         </div>
         <div className="md:hidden flex items-center">
           <FiMenu size={24} onClick={() => setMenuOpen(!menuOpen)} />
         </div>
       </div>
-      {menuOpen && (
+      {/* {menuOpen && (
         <div className="absolute top-[8vh] right-[6vw] bg-white shadow-lg rounded-lg p-4 z-50 md:hidden">
           <button
             onClick={() => handleNavigate("/sign-in")}
@@ -45,14 +56,23 @@ const Header = () => {
           >
             Login
           </button>
-          <button
-            onClick={() => handleNavigate("/sign-up")}
-            className="block w-full text-left text-white bg-black rounded-lg p-2"
-          >
-            Sign up
-          </button>
+          {!token ? (
+            <button
+              // onClick={() => handleNavigate("/sign-up")}
+              className="block w-full text-left text-white bg-black rounded-lg p-2"
+            >
+              Log out
+            </button>
+          ) : (
+            <button
+              onClick={() => handleNavigate("/sign-up")}
+              className="block w-full text-left text-white bg-black rounded-lg p-2"
+            >
+              Sign up
+            </button>
+          )}
         </div>
-      )}
+      )} */}
     </div>
   );
 };

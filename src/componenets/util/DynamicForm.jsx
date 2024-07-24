@@ -8,7 +8,6 @@ import DatePicker from "react-datepicker";
 import CustomInput from "./DatePickerCustom";
 import CustomSelect from "./CustomSelect";
 
-
 const DynamicForm = ({
   defaultOptions,
   getCountriesHandlerOne,
