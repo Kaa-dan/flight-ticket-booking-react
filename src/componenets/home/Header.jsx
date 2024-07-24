@@ -1,12 +1,14 @@
 import main_logo from "../../assets/home/logo/main_logo.png";
 import { useState } from "react";
 import { FiMenu } from "react-icons/fi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../../application/slices/aut.slice";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
   console.log({ token });
   const handleNavigate = (path) => {
@@ -31,7 +33,7 @@ const Header = () => {
           {token ? (
             <button
               className="h-[55px] 2xl:p-2 text-white bg-black rounded-lg w-28"
-              // onClick={() => handleNavigate("/sign-in")}
+              onClick={() => dispatch(logout())}
             >
               Log out
             </button>
