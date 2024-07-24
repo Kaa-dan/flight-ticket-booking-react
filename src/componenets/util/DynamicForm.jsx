@@ -17,7 +17,7 @@ const DynamicForm = ({
   form,
   dateDynamic,
 }) => {
-  const [startDate, setStartDate] = useState(formData.travelDate);
+  const [startDate, setStartDate] = useState(dateDynamic);
 
   useEffect(() => {
     setForm({ travelDate: startDate });
@@ -64,7 +64,7 @@ const DynamicForm = ({
             <DatePicker
               // minDate={dateDynamic}
               minDate={formData.travelDate}
-              selected={dateDynamic}
+              selected={startDate}
               onChange={(date) => setStartDate(date)}
               customInput={<CustomInput CustomIcon={MdOutlineDateRange} />}
               dateFormat="dd-MM-yyyy"

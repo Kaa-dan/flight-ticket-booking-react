@@ -42,11 +42,7 @@ const MultiCityForm = ({
       <div className="lg:w-[75%] flex flex-col gap-3">
         {dynamicFormData.map((form, index) => (
           <DynamicForm
-            dateDynamic={
-              index === 0
-                ? formData.travelDate
-                : dynamicFormData[index - 1].travelDate
-            }
+            dateDynamic={formData.travelDate}
             key={index}
             dynamicFormData={dynamicFormData}
             defaultOptions={defaultOptions}
