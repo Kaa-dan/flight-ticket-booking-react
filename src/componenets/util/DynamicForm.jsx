@@ -7,7 +7,7 @@ import DatePicker from "react-datepicker";
 // custom components
 import CustomInput from "./DatePickerCustom";
 import CustomSelect from "./CustomSelect";
-import axios from "axios";
+
 
 const DynamicForm = ({
   defaultOptions,
@@ -17,7 +17,6 @@ const DynamicForm = ({
   formData,
   form,
   dateDynamic,
-  cityDynamic,
 }) => {
   const [startDate, setStartDate] = useState(dateDynamic);
 
