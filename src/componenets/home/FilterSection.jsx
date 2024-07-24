@@ -44,7 +44,7 @@ const FilterSection = () => {
 
   // State for dynamically rendering form elements
   const [dynamicFormData, setDynamicFormData] = useState([
-    { fromCity: "", toCity: "", travelDate: new Date() },
+    { fromCity: "", toCity: "", travelDate: formData.travelDate },
   ]);
 
   console.log({ formData });

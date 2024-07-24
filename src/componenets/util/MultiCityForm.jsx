@@ -13,14 +13,14 @@ const MultiCityForm = ({
   const dynamicFormIncreseHandler = () => {
     if (dynamicFormData.length < 5) {
       setDynamicFormData((prev) => {
-        let travelDate = new Date();
+        // let travelDate = new Date();
 
         return [
           ...prev,
           {
             fromCity: "",
             toCity: "",
-            travelDate: travelDate,
+            travelDate: formData.travelDate,
           },
         ];
       });
@@ -42,6 +42,11 @@ const MultiCityForm = ({
       <div className="lg:w-[75%] flex flex-col gap-3">
         {dynamicFormData.map((form, index) => (
           <DynamicForm
+            dateDynamic={
+              index === 0
+                ? formData.travelDate
+                : dynamicFormData[index - 1].travelDate
+            }
             key={index}
             dynamicFormData={dynamicFormData}
             defaultOptions={defaultOptions}
