@@ -1,13 +1,13 @@
 import Logo from "../../assets/home/logo/main_logo.png";
 import SliderImg from "../../assets/auth/slider.png";
-import google from "../../assets/auth/google.png";
-import facebook from "../../assets/auth/facebook.png";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import OTPInput from "../../componenets/auth/OTP";
+import { RiHome7Fill } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [phone, setPhone] = useState("");
@@ -15,6 +15,22 @@ const Login = () => {
   const [step, setStep] = useState("sent-otp");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [timer, setTimer] = useState(30);
+  const [canResend, setCanResend] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let interval;
+    if (step === "otp-sent-success" && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      setCanResend(true);
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [step, timer]);
 
   const handleOnChange = (value, countryData) => {
     console.log({ countryData });
@@ -41,11 +57,8 @@ const Login = () => {
     return parsedPhoneNumber && parsedPhoneNumber.isValid();
   };
 
-  const handleSubmit = async () => {
-    
+  const handleSendOTP = async () => {
     try {
-      
-
       if (!validatePhoneNumber(phone, country.countryCode)) {
         setError("Invalid phone number for the selected country.");
         return;
@@ -62,7 +75,7 @@ const Login = () => {
         },
       };
 
-      setLoading((prev) => true);
+      setLoading(true);
       const data = await axios.post(
         `${import.meta.env.VITE_SERVER_URL}user/send-sms`,
         query,
@@ -73,19 +86,37 @@ const Login = () => {
         }
       );
 
-    
       if (data) {
         setLoading(false);
         setStep("otp-sent-success");
+        setTimer(30); // Reset the timer
+        setCanResend(false); // Disable the resend button
       }
     } catch (error) {
+      setLoading(false);
       console.log(error.message);
     }
+  };
+
+  const handleResendOTP = () => {
+    handleSendOTP();
+  };
+
+  const handleSubmit = () => {
+    handleSendOTP();
   };
 
   return (
     <div className="h-screen flex">
       <div className="flex w-[90%] mx-auto">
+        <div
+          onClick={() => {
+            navigate("/");
+          }}
+          className="absolute md:top-[15%] left-[9%] text-[2rem] cursor-pointer"
+        >
+          <RiHome7Fill />
+        </div>
         <div className="bg-blue w-[50%] flex flex-col items-center justify-center">
           <div className="flex flex-col w-[85%] gap-4">
             <div className="flex items-center gap-7">
@@ -103,60 +134,62 @@ const Login = () => {
               </h3>
             </div>
 
-            <div className="flex flex-col gap-4">
+            <div className="">
               {step === "sent-otp" && (
                 <PhoneInput
                   country={"in"}
                   value={phone}
                   onChange={handleOnChange}
-                  containerClass="h-[45px] border border-black rounded-md"
+                  containerClass="h-[45px] border border-black rounded-md flex flex-row gap-2"
                   inputProps={{
                     name: "phone",
                     required: true,
                     autoFocus: true,
                     className:
-                      "p-2 border-none w-full text-center h-full outline-none rounded-md",
+                      "p-2 border-none w-full th-full outline-none rounded-md  ml-12 flex  h-full w-3/4",
                   }}
-                  buttonClass="bg-red-500"
+                  buttonClass=""
                   dropdownClass="absolute bg-white border border-gray-300 shadow-lg"
                   enableSearch
                 />
               )}
-              {step === "otp-sent-success" && <OTPInput value={country} />}
+              {step === "otp-sent-success" && (
+                <div>
+                  <OTPInput value={country} />
+                  <div className="mt-2 text-center">
+                    {timer > 0 ? (
+                      <p>Resend OTP in {timer} seconds</p>
+                    ) : (
+                      <button
+                        onClick={handleResendOTP}
+                        className="bg-[#007EC4] text-white h-[45px] rounded-md mt-5 w-full"
+                        disabled={loading}
+                      >
+                        {loading ? "Loading..." : "Resend OTP"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {error && <p className="text-red-500 text-sm">{error}</p>}
             </div>
             {step === "sent-otp" && (
               <button
+                disabled={loading}
                 onClick={handleSubmit}
                 className="bg-[#007EC4] text-white h-[45px] rounded-md mt-5"
               >
                 {loading ? "Loading...." : " Send OTP"}
               </button>
             )}
-
-            <div className="flex items-center w-full justify-center">
-              <h2>
-                Don't have an account?{" "}
-                <a className="text-red-500 font-medium" href="/sign-up">
-                  Sign up
-                </a>
-              </h2>
-            </div>
-
-            <div className="flex justify-center my-6 items-center text-slate-500">
-              <div className="flex-grow border-t border-gray-400"></div>
-              <span className="mx-2">Or login with</span>
-              <div className="flex-grow border-t border-gray-400"></div>
-            </div>
-            <div className="flex justify-between">
-              <button className="h-[45px] border border-[#007EC4] bg-white w-[45%] rounded-sm flex justify-center items-center">
-                <img className="h-[35px]" src={facebook} alt="Facebook" />
-              </button>
-              <button className="h-[45px] border border-[#007EC4] bg-white w-[45%] rounded-sm flex justify-center items-center">
-                <img className="h-[30px]" src={google} alt="Google" />
-              </button>
-            </div>
+            {step !== "sent-otp" && (
+              <div className="flex flex-row items-center w-full justify-center">
+                <h2 className="flex items-center underline text-red-600">
+                  <a href="/sign-in"> Change number</a>
+                </h2>
+              </div>
+            )}
           </div>
         </div>
         <div className="w-[50%] flex items-center h-full">
