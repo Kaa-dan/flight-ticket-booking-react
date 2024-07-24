@@ -47,6 +47,9 @@ const FilterSection = () => {
     { fromCity: "", toCity: "", travelDate: new Date() },
   ]);
 
+  console.log({ formData });
+  console.log({ dynamicFormData });
+
   const [Loading, setLoading] = useState(false);
 
   //filter state for country code
@@ -360,6 +363,7 @@ const FilterSection = () => {
           <div className="  rounded   flex items-center border md:w-1/2  py-2 ">
             <div className=" flex items-center justify-center md:justify-evenly   w-full">
               <DatePicker
+                minDate={new Date()}
                 selected={formData.travelDate}
                 onChange={(date) => {
                   setFormData((prevState) => {
@@ -374,7 +378,6 @@ const FilterSection = () => {
                 }}
                 customInput={<CustomInput CustomIcon={MdOutlineDateRange} />}
                 dateFormat="dd-MM-yyyy"
-                minDate={new Date()}
                 value={formData.travelDate}
               />
               {typeOfTravel !== "multi-city" ? (
@@ -382,6 +385,7 @@ const FilterSection = () => {
                   {" "}
                   <span className="">|</span>
                   <DatePicker
+                    minDate={formData.travelDate}
                     selected={formData.returnDate}
                     onChange={(date) => {
                       setFormData((prev) => ({ ...prev, returnDate: date }));
