@@ -45,8 +45,9 @@ const Login = () => {
       dialCode: countryData.dialCode,
       countryCode: countryData.countryCode.toUpperCase(),
       country: countryData.name,
-      onlyPhoneNumber: value,
+      onlyPhoneNumber: newPhno,
     });
+    console.log({ newPhno });
   };
 
   const validatePhoneNumber = (phoneNumber, countryCode) => {
@@ -74,6 +75,7 @@ const Login = () => {
           countryName: country.country,
         },
       };
+      console.log({query});
 
       setLoading(true);
       const data = await axios.post(
