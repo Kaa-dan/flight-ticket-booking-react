@@ -2,7 +2,7 @@ import React from "react";
 import { FaPlane } from "react-icons/fa";
 import { HiOutlineDownload } from "react-icons/hi";
 import Header from "../../componenets/home/Header";
-
+import FlightTicket from "../../componenets/booking/viewBooking/FlightTickets";
 const FlightBookings = () => {
   const bookings = [
     {
@@ -43,24 +43,24 @@ const FlightBookings = () => {
   return (
     <div className=" bg-violet-400">
       <Header />
-      <div className="mx-[7vw] my-10">
-        <div className="flex justify-between items-center rounded-lg bg-red-800 mb-6 p-5">
-          <div className="flex h-16 space-x-4 justify-between bg-slate-500 w-full">
-            <button className="py-2 px-6 w-1/4 bg-blue-600 text-white rounded-lg">
+      <div className="mx-[7vw] my-5">
+        <div className="flex justify-between items-center rounded-lg bg-red-800 mb-5 px-3 py-4">
+          <div className="flex h-12 space-x-1 justify-between bg-slate-500 w-full">
+            <button className="py-2 px-6 w-1/4 bg-blue-600 text-white ">
               Flights
             </button>
-            <button className="py-2 w-1/4 px-6 bg-gray-200 text-gray-600 rounded-lg">
+            <button className="py-2 w-1/4 px-6 bg-gray-200 text-gray-600 ">
               Helicopters
             </button>
-            <button className="py-2 w-1/4 px-6 bg-gray-200 text-gray-600 rounded-lg">
+            <button className="py-2 w-1/4 px-6 bg-gray-200 text-gray-600 ">
               Air Ambulance
             </button>
-            <button className="py-2 w-1/4 px-6 bg-gray-200 text-gray-600 rounded-lg">
+            <button className="py-2 w-1/4 px-6 bg-gray-200 text-gray-600 ">
               Charter Flight
             </button>
           </div>
         </div>
-        <div className="flex justify-between h-12 items-center bg-yellow-500 mb-4 p-2 rounded-lg ">
+        <div className="flex justify-between h-10 items-center bg-yellow-500 mb-3 p-2 rounded-lg ">
           <div className="flex h-full w-full justify-between">
             <button className="py-2  w-1/3 px-6  text-white border-b-2 border-blue-900">
               Upcoming
@@ -74,51 +74,12 @@ const FlightBookings = () => {
           </div>
         </div>
         <div className="bg-pink-500 p-4 rounded-lg shadow-md">
-          <h2 className="text-xl font-bold mb-4">
-            Bookings / Flights / Upcoming
+          <h2 className="text-lg font-bold mb-3">
+            <a href="">Bookings</a> / <a href="">Flights </a> /{" "}
+            <a href="">Upcoming</a>
           </h2>
           {bookings.map((booking, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center bg-gray-100 p-4 mb-4 rounded-lg border"
-            >
-              <div className="flex items-center">
-                <img
-                  src={booking.airlineLogo}
-                  alt="Airline Logo"
-                  className="w-16 h-16 mr-4"
-                />
-                <div className="text-left">
-                  <div className="font-bold text-lg">{booking.from}</div>
-                  <div className="text-gray-600">{booking.departureTime}</div>
-                  <FaPlane className="mx-auto my-2 text-blue-500" />
-                  <div className="font-bold text-lg">{booking.to}</div>
-                  <div className="text-gray-600">{booking.arrivalTime}</div>
-                </div>
-              </div>
-              <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
-                <div className="text-center md:text-left">
-                  <div className="text-gray-500">Date</div>
-                  <div>{booking.date}</div>
-                </div>
-                <div className="text-center md:text-left">
-                  <div className="text-gray-500">Flight time</div>
-                  <div>{booking.flightTime}</div>
-                </div>
-                <div className="text-center md:text-left">
-                  <div className="text-gray-500">Gate</div>
-                  <div>{booking.gate}</div>
-                </div>
-                <div className="text-center md:text-left">
-                  <div className="text-gray-500">Seat no.</div>
-                  <div>{booking.seatNo}</div>
-                </div>
-                <button className="flex items-center py-2 px-4 bg-blue-600 text-white rounded-lg">
-                  <HiOutlineDownload className="mr-2" />
-                  Download Ticket
-                </button>
-              </div>
-            </div>
+            <FlightTicket />
           ))}
         </div>
       </div>
