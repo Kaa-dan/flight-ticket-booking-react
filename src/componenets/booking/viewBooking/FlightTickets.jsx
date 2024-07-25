@@ -5,10 +5,10 @@ const FlightTicket = () => {
     <div className="flex items-center justify-between p-4 border rounded-lg shadow-md bg-white">
       <div className="flex items-center">
         <img
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Emirates_logo.svg/2560px-Emirates_logo.svg.png"
-          alt="Emirates Logo"
-          className="h-16 w-16 object-contain mr-4"
+          src={FlightLogo}
+          className="h-16 w-16 rounded-lg p-1 object-contain mr-4 border border-blue-700"
         />
+
         <div>
           <div className="flex items-center space-x-4">
             <div className="text-lg font-semibold">Destination 1</div>

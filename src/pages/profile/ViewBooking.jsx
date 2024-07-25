@@ -78,9 +78,11 @@ const FlightBookings = () => {
             <a href="">Bookings</a> / <a href="">Flights </a> /{" "}
             <a href="">Upcoming</a>
           </h2>
-          {bookings.map((booking, index) => (
-            <FlightTicket />
-          ))}
+          <div className="flex flex-col gap-2">
+            {bookings.map((booking, index) => (
+              <FlightTicket />
+            ))}
+          </div>
         </div>
       </div>
     </div>
