@@ -9,16 +9,21 @@ const FlightTicket = () => {
           className="h-16 w-16 rounded-lg p-1 object-contain mr-4 border border-blue-700"
         />
 
-        <div>
-          <div className="flex items-center space-x-4">
-            <div className="text-lg font-semibold">Destination 1</div>
-            <div className="text-lg">-</div>
-            <div className="text-lg font-semibold">Destination 2</div>
+        <div className="bg-yellow-400 flex gap-2 items-center ">
+          <div className="flex justify-center items-center gap-1 ">
+            <div>
+              <div className="text-lg font-semibold">Destination 1</div>
+
+              <div className="text-lg font-semibold">Destination 2</div>
+            </div>
           </div>
+          <div>----</div>
           <div className="flex items-center space-x-4">
-            <div className="text-xl font-bold">12:00 pm</div>
-            <div className="text-xl">-</div>
-            <div className="text-xl font-bold">6:00 pm</div>
+            <div className="flex flex-col items-end">
+              <div className="text-xl font-bold">12:00 pm</div>
+
+              <div className="text-xl font-bold">6:00 pm</div>
+            </div>
           </div>
         </div>
       </div>
