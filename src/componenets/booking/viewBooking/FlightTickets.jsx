@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import FlightLogo from "../../../assets/booking/viewBookings/flightLogo.png";
 import { MdOutlineDateRange } from "react-icons/md";
 import { BsDoorClosedFill } from "react-icons/bs";
 import { IoIosTime } from "react-icons/io";
 import { MdAirlineSeatReclineExtra } from "react-icons/md";
 const FlightTicket = () => {
+ 
+
   return (
     <div className="flex items-center justify-between p-4 border rounded-lg shadow-md bg-white">
       <div className="flex items-center">
