@@ -3,72 +3,13 @@ import Header from "../../componenets/home/Header";
 import FlightTicket from "../../componenets/booking/viewBooking/FlightTickets";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const FlightBookings = () => {
   const [bookingFilter, setBookingFilter] = useState("UPCOMING");
   const { token } = useSelector((state) => state.auth);
   const [bookingData, setBookingData] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const bookings = [
-    {
-      id: 1,
-      airlineLogo: "https://via.placeholder.com/50",
-      from: "Destination 1",
-      to: "Destination 2",
-      departureTime: "12:00 pm",
-      arrivalTime: "6:00 pm",
-      date: "12-11-22",
-      flightTime: "Newark(EWR)",
-      gate: "A12",
-      seatNo: "128",
-      status: "UPCOMING",
-    },
-    {
-      id: 2,
-      airlineLogo: "https://via.placeholder.com/50",
-      from: "Destination 1",
-      to: "Destination 2",
-      departureTime: "12:00 pm",
-      arrivalTime: "6:00 pm",
-      date: "12-11-22",
-      flightTime: "Newark(EWR)",
-      gate: "A12",
-      seatNo: "128",
-      status: "COMPLETED",
-    },
-    {
-      id: 3,
-      airlineLogo: "https://via.placeholder.com/50",
-      from: "Destination 1",
-      to: "Destination 2",
-      departureTime: "12:00 pm",
-      arrivalTime: "6:00 pm",
-      date: "12-11-22",
-      flightTime: "Newark(EWR)",
-      gate: "A12",
-      seatNo: "128",
-      status: "CANCELLED",
-    },
-    ,
-    {
-      id: 4,
-      airlineLogo: "https://via.placeholder.com/50",
-      from: "Destination 1",
-      to: "Destination 2",
-      departureTime: "12:00 pm",
-      arrivalTime: "6:00 pm",
-      date: "12-11-22",
-      flightTime: "Newark(EWR)",
-      gate: "A12",
-      seatNo: "128",
-      status: "CANCELLED",
-    },
-  ];
-
-  const filteredBookings = bookings.filter(
-    (booking) => booking.status === bookingFilter
-  );
 
   const getBookingData = async () => {
     try {
@@ -103,6 +44,7 @@ const FlightBookings = () => {
       console.log(error.message);
     }
   };
+
   useEffect(() => {
     getBookingData();
   }, [bookingFilter]);
@@ -171,6 +113,7 @@ const FlightBookings = () => {
                 <FlightTicket
                   key={booking.id}
                   index={index}
+                  bookingID={booking.bookingId}
                   booking={booking}
                 />
               ))

@@ -5,7 +5,8 @@ import { BsDoorClosedFill } from "react-icons/bs";
 import { IoIosTime } from "react-icons/io";
 import { MdAirlineSeatReclineExtra } from "react-icons/md";
 import { MdAirlineStops } from "react-icons/md";
-const FlightTicket = ({ booking, index }) => {
+import { useNavigate } from "react-router-dom";
+const FlightTicket = ({ booking, index, bookingID }) => {
   // Utility function to format the date
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -14,12 +15,19 @@ const FlightTicket = ({ booking, index }) => {
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
-
+  const navigate = useNavigate();
   const formatTime = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
-  console.log({ booking, index });
+  const getSingleTripDetailHandler = async () => {
+    try {
+      navigate(`/view-detailed-booking?bookingId=${bookingID}`);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <div className="flex justify-between items-end p-4 border rounded-lg shadow-md flex-row  w-full">
       <div className="w-[75%] justify-between flex flex-col gap-2 b ">
@@ -55,7 +63,6 @@ const FlightTicket = ({ booking, index }) => {
                 <div className="border w-6 border-black"></div>
                 <div className="flex  w-[30%] items-center space-x-4">
                   <div className="flex flex-col items-end">
-                    {console.log({ trip, index })}
                     <div className="text-xl font-bold">
                       {formatTime(trip.sI[0].dt)}
                     </div>
@@ -70,7 +77,7 @@ const FlightTicket = ({ booking, index }) => {
               </div>
             </div>
 
-            <div className="flex items-center w-[30%]  space-x-6 ">
+            <div className="flex items-center w-[30%]   space-x-6 ">
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-1">
                   <div className="text-[1.5rem] text-sky-600 bg-slate-300 p-1 rounded-md">
@@ -127,7 +134,10 @@ const FlightTicket = ({ booking, index }) => {
         <button className="bg-[#007EC4] text-white px-4 py-2 rounded-sm">
           Download Ticket
         </button>
-        <button className="bg-transparent border border-[#007EC4] t px-4 py-2 rounded-sm">
+        <button
+          className="bg-transparent border border-[#007EC4] t px-4 py-2 rounded-sm"
+          onClick={getSingleTripDetailHandler}
+        >
           &gt;
         </button>
       </div>
