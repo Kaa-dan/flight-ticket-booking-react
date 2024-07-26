@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  MdOutlineDateRange,
-  MdAirlineSeatReclineExtra,
-  MdOutlineAirlineSeatReclineExtra,
-} from "react-icons/md";
+import { MdOutlineAirlineSeatReclineExtra } from "react-icons/md";
 import { BsDoorClosedFill } from "react-icons/bs";
 import { IoIosTime } from "react-icons/io";
 import { MdDateRange } from "react-icons/md";
@@ -11,6 +7,7 @@ import FlighFromToo from "../../../assets/booking/viewDetailedBookings/flight.sv
 import paymentFlight from "../../../assets/booking/viewDetailedBookings/paymentFlight.png";
 
 const ViewDetailedBookingCard = ({ singleBookingData }) => {
+  console.log({ singleBookingData });
   return (
     <div className="shadow-lg mt-4 border rounded-sm  ">
       <div className="mx-auto  rounded-lg shadow-md  p-7 ">
@@ -28,11 +25,18 @@ const ViewDetailedBookingCard = ({ singleBookingData }) => {
           </div>
           <div className="text-right">
             <div className="text-xl font-bold">Price</div>
-            <div className="text-2xl font-bold">₹ 6000/-</div>
+            <div className="text-2xl font-bold">
+              ₹{" "}
+              {
+                singleBookingData?.itemInfos.AIR.totalPriceInfo.totalFareDetail
+                  .fC.TF
+              }
+              /-
+            </div>
           </div>
         </div>
-
-        <div className="border p-4 mb-4 my-2">
+        {singleBookingData?.itemInfos?.AIR.tripInfos.map(() => {})}
+        <div className="border p-4 mb-4 my-2 bg-red-500">
           <div className="flex gap-2w-full p-1 ">
             <div className="  bg-[#D0E7F4] flex justify-center items-center gap-3 p-2 rounded-lg flex-col w-[40%]">
               <div className="w-full">
@@ -64,7 +68,7 @@ const ViewDetailedBookingCard = ({ singleBookingData }) => {
               <div className="flex w-full justify-between items-center">
                 <div>
                   <div className="text-sm font-light">
-                    <span>Hyderabad</span>
+                    <span>{}</span>
                   </div>
                   <div className="font-semibold text-md">
                     <span>HYD</span>
@@ -98,7 +102,7 @@ const ViewDetailedBookingCard = ({ singleBookingData }) => {
             <div className="w-[60%]  flex flex-col justify-center p-4">
               <div className="flex justify-between mb-2">
                 <div className="flex  gap-1 items-center">
-                  <div className="text-[2rem] text-white bg-[#0A2945] p-1 rounded-lg">
+                  <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
                     <MdDateRange />
                   </div>
                   <div className="">
@@ -110,7 +114,7 @@ const ViewDetailedBookingCard = ({ singleBookingData }) => {
                   </div>
                 </div>
                 <div className="flex  gap-1 items-center">
-                  <div className="text-[2rem] text-white bg-[#0A2945] p-1 rounded-lg">
+                  <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
                     <IoIosTime />
                   </div>
                   <div className="">
@@ -122,7 +126,7 @@ const ViewDetailedBookingCard = ({ singleBookingData }) => {
                   </div>
                 </div>
                 <div className="flex  gap-1 items-center">
-                  <div className="text-[2rem] text-white bg-[#0A2945] p-1 rounded-lg">
+                  <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
                     <IoIosTime />
                   </div>
                   <div className="">
@@ -136,7 +140,7 @@ const ViewDetailedBookingCard = ({ singleBookingData }) => {
               </div>
               <div className=" flex justify-between ">
                 <div className="flex  gap-1 items-center  ">
-                  <div className="text-[2rem] text-white bg-[#0A2945] p-1 rounded-lg">
+                  <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
                     <BsDoorClosedFill />
                   </div>
                   <div className="">
@@ -148,7 +152,7 @@ const ViewDetailedBookingCard = ({ singleBookingData }) => {
                   </div>
                 </div>
                 <div className="flex  gap-1 items-center">
-                  <div className="text-[2rem] text-white bg-[#0A2945] p-1 rounded-lg">
+                  <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
                     <BsDoorClosedFill />
                   </div>
                   <div className="">
@@ -160,7 +164,7 @@ const ViewDetailedBookingCard = ({ singleBookingData }) => {
                   </div>
                 </div>
                 <div className="flex  gap-1 items-center">
-                  <div className="text-[2rem] text-white bg-[#0A2945] p-1 rounded-lg">
+                  <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
                     <MdOutlineAirlineSeatReclineExtra />
                   </div>
                   <div className="">
@@ -175,6 +179,7 @@ const ViewDetailedBookingCard = ({ singleBookingData }) => {
             </div>
           </div>
         </div>
+
         <div className="flex justify-center">
           <div className="flex items-center text-white w-3/4 justify-between bg-[#253B59] p-3 rounded-lg">
             <div>Require to change plane</div>

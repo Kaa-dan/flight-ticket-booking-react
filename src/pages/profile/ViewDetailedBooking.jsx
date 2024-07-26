@@ -6,7 +6,6 @@ import { useLocation } from "react-router-dom";
 import { getQueryParams } from "../../componenets/util/getQueryParams";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { BsArrow90DegDown } from "react-icons/bs";
 import { FaAngleDoubleDown } from "react-icons/fa";
 
 const ViewDetailedBooking = () => {
@@ -66,7 +65,6 @@ const ViewDetailedBooking = () => {
           </div>
         </div>
         <div className="w-[25%] flex flex-col gap-3  p-5 rounded-lg shadow-lg  border">
-          
           <div className="border-y py-4 text-[1rem]">
             <h2 className="font-montserrat">
               Your booking is protected by{" "}
@@ -92,7 +90,8 @@ const ViewDetailedBooking = () => {
                 >
                   <div className="flex justify-center items-center gap-1">
                     {" "}
-                    <div>Total Additional Fare</div> <FaAngleDoubleDown />
+                    <div>Total Additional Fare</div>{" "}
+                    <FaAngleDoubleDown color="green" />
                   </div>
 
                   <div>
