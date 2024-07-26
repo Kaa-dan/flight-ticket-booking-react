@@ -33,31 +33,7 @@ const offers = [
 const OfferSection = () => {
   return (
     <div className="h-[100%]  mx-auto max-w-[1900px] min-w-[250px] overflow-hidden  ">
-      <div
-        className="lg:h-[15vh] px-4 flex flex-col md:flex-row
-       md:flex leading-[1]   justify-between lg:px-24 max-w-[1900px] mx-auto mb-2"
-      >
-        <div className="flex flex-col items-start gap-4 2xl:gap-6 ">
-          <h2 className="font-semibold text-[1.3rem]  md:text-4xl 2xl:text-[2.2rem] ">
-            Explore places together
-          </h2>
-          <h4 className="font-light text-sm md:text-lg 2xl:text-2xl">
-            Discover the latest offers and news and start planning your next
-            trip with us.
-          </h4>
-        </div>
-
-        <div className="flex items-center rounded-lg w-full md:w-1/4 2xl:h-full">
-          <select
-            className="flex justify-center relative  items-center p-2 w-full  outline-none sm:w-1/2 sm:mx-auto rounded-lg border border-blue-500 mt-1 font-roboto text-center font-light  bg-white md:w-3/4 2xl:w-3/4 2xl:p-4"
-            name=""
-            id=""
-          >
-            <option value="Nithin">International</option>
-            <option value="Nithin">Domestic</option>
-          </select>
-        </div>
-      </div>
+      
       <div
         className="h-[100%]   flex 
           text-white w-full flex-wrap gap-4 md:py-7 justify-center py-3 "

@@ -6,12 +6,13 @@ import Contact from "../componenets/home/Contact";
 import Footer from "../componenets/home/Footer";
 const Home = () => {
   return (
-    <div className="  font-montserrat relative ">
+    <div className="  font-montserrat relative bg-white ">
       <Header />
 
       <Banner />
-
-      <FilterSection />
+      
+        <FilterSection />
+   
 
       <OfferSection />
 
