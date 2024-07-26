@@ -18,7 +18,7 @@ const FlightTicket = ({ booking }) => {
   return (
     <div className="flex justify-between items-end p-4 border rounded-lg shadow-md flex-row  w-full">
       <div className="w-[75%] justify-between flex flex-col gap-2 b ">
-        {booking.data.itemInfos.AIR.tripInfos.map(() => (
+        {booking.data.itemInfos.AIR.tripInfos.map((trip) => (
           <div className="flex justify-between items-center border p-3 border-slate-400  gap-2">
             <div className="flex">
               <img
@@ -29,7 +29,7 @@ const FlightTicket = ({ booking }) => {
               <div className=" flex gap-3 items-center ">
                 <div className="flex justify-center items-center gap-1 ">
                   <div>
-                    <div className="text-lg font-semibold">Destination 1</div>
+                    <div className="text-lg font-semibold">{trip.sI.length}</div>
 
                     <div className="text-lg font-semibold">Destination 2</div>
                   </div>
