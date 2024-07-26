@@ -72,6 +72,7 @@ const FlightBookings = () => {
 
   const getBookingData = async () => {
     try {
+      setBookingData(() => []);
       let response;
       const config = {
         headers: {
@@ -84,7 +85,6 @@ const FlightBookings = () => {
           config
         );
       } else if (bookingFilter === "CANCELLED") {
-       
         response = await axios.get(
           `${import.meta.env.VITE_SERVER_URL}user/cancelled-user-bookings`,
           config
@@ -96,7 +96,6 @@ const FlightBookings = () => {
         );
       }
 
-   
       if (response.status === 200) {
         setBookingData(response.data);
       }
@@ -168,8 +167,12 @@ const FlightBookings = () => {
           </h2>
           <div className="flex flex-col gap-2">
             {bookingData.length > 0 ? (
-              bookingData?.map((booking) => (
-                <FlightTicket key={booking.id} booking={booking} />
+              bookingData?.map((booking, index) => (
+                <FlightTicket
+                  key={booking.id}
+                  index={index}
+                  booking={booking}
+                />
               ))
             ) : (
               <p>No {bookingFilter.toLowerCase()} bookings.</p>

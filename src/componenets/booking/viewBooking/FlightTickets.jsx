@@ -4,7 +4,8 @@ import { MdOutlineDateRange } from "react-icons/md";
 import { BsDoorClosedFill } from "react-icons/bs";
 import { IoIosTime } from "react-icons/io";
 import { MdAirlineSeatReclineExtra } from "react-icons/md";
-const FlightTicket = ({ booking }) => {
+import { MdAirlineStops } from "react-icons/md";
+const FlightTicket = ({ booking, index }) => {
   // Utility function to format the date
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -14,38 +15,62 @@ const FlightTicket = ({ booking }) => {
     return `${year}-${month}-${day}`;
   };
 
-  console.log({ booking });
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+  console.log({ booking, index });
   return (
     <div className="flex justify-between items-end p-4 border rounded-lg shadow-md flex-row  w-full">
       <div className="w-[75%] justify-between flex flex-col gap-2 b ">
-        {booking.data.itemInfos.AIR.tripInfos.map((trip) => (
-          <div className="flex justify-between items-center border p-3 border-slate-400  gap-2">
-            <div className="flex">
+        {booking.data.itemInfos.AIR.tripInfos.map((trip, index) => (
+          <div className="flex justify-between items-center border p-3  w-full border-slate-400  gap-2">
+            <div className="flex w-[70%] ">
               <img
                 src={FlightLogo}
                 className="h-16 w-16 rounded-lg p-1 object-contain mr-4 border border-blue-700"
               />
 
-              <div className=" flex gap-3 items-center ">
-                <div className="flex justify-center items-center gap-1 ">
+              <div className=" flex  w-full gap-3 items-center ">
+                <div className="flex justify-center items-center gap-1 w-[60%]  ">
                   <div>
-                    <div className="text-lg font-semibold">{trip.sI.length}</div>
+                    <div className="text-lg font-semibold flex ">
+                      {trip.sI[0].da.code}-{" "}
+                      <span className="text-[1rem]">{trip.sI[0].da.name}</span>
+                    </div>
 
-                    <div className="text-lg font-semibold">Destination 2</div>
+                    <div className="text-lg font-semibold">
+                      {trip.sI.length === 1
+                        ? trip.sI[0].aa.code
+                        : trip.sI[trip.sI.length - 1].aa.code}{" "}
+                      -
+                      <span className="text-[1rem]">
+                        {trip.sI.length === 1
+                          ? trip.sI[0].aa.name
+                          : trip.sI[trip.sI.length - 1].aa.name}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="border w-6 border-black"></div>
-                <div className="flex items-center space-x-4">
+                <div className="flex  w-[30%] items-center space-x-4">
                   <div className="flex flex-col items-end">
-                    <div className="text-xl font-bold">12:00 pm</div>
+                    {console.log({ trip, index })}
+                    <div className="text-xl font-bold">
+                      {formatTime(trip.sI[0].dt)}
+                    </div>
 
-                    <div className="text-xl font-bold">6:00 pm</div>
+                    <div className="text-xl font-bold">
+                      {trip.sI.length === 1
+                        ? formatTime(trip.sI[0].at)
+                        : formatTime(trip.sI[trip.sI.length - 1].at)}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center  space-x-6 ">
+            <div className="flex items-center w-[30%]  space-x-6 ">
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-1">
                   <div className="text-[1.5rem] text-sky-600 bg-slate-300 p-1 rounded-md">
@@ -54,7 +79,7 @@ const FlightTicket = ({ booking }) => {
                   <div>
                     <div className="text-sm text-gray-500">Date</div>
                     <div className="font-medium">
-                      {formatDate(booking.createdAt)}
+                      {formatDate(trip.sI[0].dt)}
                     </div>
                   </div>
                 </div>
@@ -64,7 +89,10 @@ const FlightTicket = ({ booking }) => {
                   </div>
                   <div>
                     <div className="text-sm text-gray-500">Flight time</div>
-                    <div className="font-medium">Newark</div>
+                    <div className="font-medium">
+                      {" "}
+                      {formatTime(trip.sI[0].dt)}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -75,16 +103,18 @@ const FlightTicket = ({ booking }) => {
                   </div>
                   <div>
                     <div className="text-sm text-gray-500">Gate</div>
-                    <div className="font-medium">A12</div>
+                    <div className="font-bold text-[1rem]">
+                      {trip.sI[0].aa?.terminal || "N/A"}
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="text-[1.5rem] text-sky-600 bg-slate-300 p-1 rounded-md">
-                    <MdAirlineSeatReclineExtra />
+                    <MdAirlineStops />
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500">Seat no</div>
-                    <div className="font-medium">128</div>
+                    <div className="text-sm text-gray-500">Stops</div>
+                    <div className="font-medium">{trip.sI.length}</div>
                   </div>
                 </div>
               </div>
