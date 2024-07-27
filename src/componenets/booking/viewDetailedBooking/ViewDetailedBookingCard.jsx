@@ -40,17 +40,17 @@ const ViewDetailedBookingCard = ({ singleBookingData }) => {
         {singleBookingData?.itemInfos?.AIR.tripInfos.map((value) => {
 
           console.log({ value })
-          return <div className="border p-4 mb-4 my-2 bg-red-500">
+          return <div className="border px-2 py-4 mb-4  my-2 ">
             <div className="flex gap-2w-full p-1 ">
               <div className="  bg-[#D0E7F4] flex justify-center items-center gap-3 p-2 rounded-lg flex-col w-[40%]">
-                <div className="w-full">
+                <div className="w-full ">
                   <div className="gap-4 flex ">
                     <div>
                       <img className="h-[60px]" src={paymentFlight} alt="" />
                     </div>
                     <div className=" py-2 flex flex-col justify-between">
                       <div className="flex flex-col gap-1">
-                        <div className="text-slate-400">Economy</div>
+                        <div className="text-slate-400">Economyyyyyyy</div>
                         <div className="font-semibold text-[1.2rem]">
                           Emirates A380 Airbus
                         </div>
@@ -69,43 +69,43 @@ const ViewDetailedBookingCard = ({ singleBookingData }) => {
                     </div>
                   </div>
                 </div>
-                <div className="flex w-full justify-between items-center gap-1">
-                  <div className="w-1/3 flex flex-col gap-1">
-                    <div className="text-sm font-light">
+                <div className="flex w-full h-full   justify-between items-center ">
+                  <div className="w-1/3 flex flex-col gap-1 h-full ">
+                    <div className="text-sm font-medium">
                       <span>{value.sI[0].da.city} </span>
                     </div>
-                    <div className="font-semibold text-md">
+                    <div className="font-semibold  text-md">
                       <span>{value.sI[0].da.code}</span>
                     </div>
-                    <div className="font-semibold text-[.8rem] ">
-                      <span>{value.sI[0].da.name}</span>
+                    <div className="font-extrabold text-[.8rem] w-full  ">
+                      <span className="w-full">{value.sI[0].da.name}</span>
                     </div>
-                    <div className="text-sm font-light">
+                    <div className="text-sm font-medium">
                       <span>{value.sI[0].da.country}</span>
                     </div>
                   </div>
-                  <div className="w-1/3">
+                  <div className="w-1/3  h-full flex justify-center items-center ">
                     <img className="h-6" src={FlighFromToo} alt="" />
                   </div>
-                  <div className=" w-1/3 flex flex-col gap-1">
-                    <div className="text-sm font-light">
+                  <div className=" w-1/3 flex flex-col gap-1 h-full ">
+                    <div className="text-sm font-medium">
                       <span>{value.sI.length === 1 ? value.sI[0].aa.city : value.sI[value.sI.length - 1].aa.city}</span>
                     </div>
                     <div className="font-semibold text-md">
                       <span>{value.sI.length === 1 ? value.sI[0].aa.code : value.sI[value.sI.length - 1].aa.code}</span>
                     </div>
-                    <div className="font-semibold text-[.8rem]">
+                    <div className="font-extrabold text-[.8rem]">
                       <span>{value.sI.length === 1 ? value.sI[0].aa.name : value.sI[value.sI.length - 1].aa.name}</span>
                     </div>
-                    <div className="text-sm font-light">
+                    <div className="text-sm font-medium ">
                       <span>{value.sI.length === 1 ? value.sI[0].aa.country : value.sI[value.sI.length - 1].aa.country}</span>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="w-[60%]  flex flex-col justify-center p-4">
-                <div className="flex justify-between mb-2">
-                  <div className="flex  gap-1 items-center">
+              <div className="w-[60%]  flex flex-col justify-center pl-4">
+                <div className="flex justify-between mb-2 w-full ">
+                  <div className="flex  gap-1 items-center w-1/3">
                     <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
                       <MdDateRange />
                     </div>
@@ -117,7 +117,7 @@ const ViewDetailedBookingCard = ({ singleBookingData }) => {
                       <div className="font-semibold">{dateDateFormatChanger(value.sI[0].dt)}</div>
                     </div>
                   </div>
-                  <div className="flex  gap-1 items-center">
+                  <div className="flex  gap-1 items-center w-1/3">
                     <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
                       <IoIosTime />
                     </div>
@@ -129,54 +129,54 @@ const ViewDetailedBookingCard = ({ singleBookingData }) => {
                       <div className="font-semibold">{timeFormatChanger(value.sI[0].dt)}</div>
                     </div>
                   </div>
-                  <div className="flex  gap-1 items-center">
+                  <div className="flex  gap-1 items-center w-1/3">
                     <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
                       <IoIosTime />
                     </div>
                     <div className="">
                       <div className="text-[#495049] font-semibold">
                         {" "}
-                        Departure Date
+                        Arrival time
                       </div>
-                      <div className="font-semibold">12/7/2024</div>
+                      <div className="font-semibold">{value.sI.length === 1 ? timeFormatChanger(value.sI[0].at) : timeFormatChanger(value.sI[value.sI.length - 1].at)}</div>
                     </div>
                   </div>
                 </div>
-                <div className=" flex justify-between ">
-                  <div className="flex  gap-1 items-center  ">
+                <div className=" flex justify-between w-full">
+                  <div className="flex  gap-1 items-center w-1/3  ">
                     <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
                       <BsDoorClosedFill />
                     </div>
                     <div className="">
                       <div className="text-[#495049] font-semibold">
                         {" "}
-                        Departure Date
+                        Terminal
                       </div>
-                      <div className="font-semibold">12/7/2024</div>
+                      <div className="font-semibold">{value.sI[0].da.terminal}</div>
                     </div>
                   </div>
-                  <div className="flex  gap-1 items-center">
+                  <div className="flex  gap-1 items-center w-1/3 ">
                     <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
                       <BsDoorClosedFill />
                     </div>
                     <div className="">
                       <div className="text-[#495049] font-semibold">
                         {" "}
-                        Departure Date
+                        Stops
                       </div>
-                      <div className="font-semibold">12/7/2024</div>
+                      <div className="font-semibold">{value.sI.length - 1}</div>
                     </div>
                   </div>
-                  <div className="flex  gap-1 items-center">
+                  <div className="flex  gap-2 items-center w-1/3 ">
                     <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
                       <MdOutlineAirlineSeatReclineExtra />
                     </div>
-                    <div className="">
+                    <div className="flex flex-col ">
                       <div className="text-[#495049] font-semibold">
                         {" "}
-                        Departure Date
+                        Seat
                       </div>
-                      <div className="font-semibold">12/7/2024</div>
+                      <div className="font-semibold">0</div>
                     </div>
                   </div>
                 </div>

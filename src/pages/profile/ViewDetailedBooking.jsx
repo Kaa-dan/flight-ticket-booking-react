@@ -53,11 +53,17 @@ const ViewDetailedBooking = () => {
         <div className="w-[75%]  flex flex-col ">
           <div className=" bg-[#007EC4] flex justify-between items-center text-white rounded-xl px-2  py-4">
             <div className="text-[1.3rem] font-bold">Ticket booking</div>
-            <div className="">
-              <button className="bg-white flex justify-center items-center text-[#007EC4] p-2 w-[200px] rounded-lg">
-                <CiSaveDown1 />
-                Download ticket
-              </button>
+            <div className="flex gap-3">
+
+              <div className="">
+                <button className="bg-red-500  flex justify-center items-center text-white p-2 w-[200px] rounded-lg">Cancel booking</button>
+              </div>
+              <div className="">
+                <button className="bg-white flex justify-center items-center text-[#007EC4] p-2 w-[200px] rounded-lg">
+                  <CiSaveDown1 />
+                  Download ticket
+                </button>
+              </div>
             </div>
           </div>
           <div className="">
