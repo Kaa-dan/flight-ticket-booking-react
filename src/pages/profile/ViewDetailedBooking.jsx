@@ -14,7 +14,7 @@ const ViewDetailedBooking = () => {
 
   const { token } = useSelector((state) => state.auth);
   const [singleBookingData, setSingleBookingData] = useState(null);
-  // const []
+
   const queryParams = getQueryParams(location.search);
   console.log(singleBookingData);
   const { bookingId } = queryParams;
