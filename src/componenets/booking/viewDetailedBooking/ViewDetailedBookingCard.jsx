@@ -11,8 +11,8 @@ import dateDateFormatChanger from "../../util/dateDateFormatChanger";
 const ViewDetailedBookingCard = ({ singleBookingData }) => {
   console.log({ singleBookingData });
   return (
-    <div className="shadow-lg mt-4 border rounded-sm  ">
-      <div className="mx-auto  rounded-lg shadow-md  p-7 ">
+    <div className="mt-4   border-l-0   ">
+      <div className="mx-auto  rounded-lg   p-7 ">
         <div className="flex justify-between items-center  bg-[#007EC4] p-4 rounded-t-xl text-white">
           <div className="flex items-center">
             <img

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { CiSaveDown1 } from "react-icons/ci";
 import ViewDetailedBookingCard from "../../componenets/booking/viewDetailedBooking/ViewDetailedBookingCard";
-
+import TermsAndConditions from "../../componenets/booking/viewDetailedBooking/TermsAndConditions";
 import { useLocation } from "react-router-dom";
 import { getQueryParams } from "../../componenets/util/getQueryParams";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { FaAngleDoubleDown } from "react-icons/fa";
+import TicketLinks from "../../componenets/booking/viewDetailedBooking/TicketLinks";
 
 const ViewDetailedBooking = () => {
   const location = useLocation();
@@ -48,16 +49,16 @@ const ViewDetailedBooking = () => {
   }, [bookingId]);
 
   return (
-    <div className="  mx-[5vw]">
-      <div className="  flex gap-2 w-full">
-        <div className="w-[75%]  flex flex-col ">
+    <div className="  mx-[5vw] ">
+      <div className="  flex gap-2 w-full ">
+        <div className="w-[75%]  flex flex-col  ">
           <div className=" bg-[#007EC4] flex justify-between items-center text-white rounded-xl px-2  py-4">
             <div className="text-[1.3rem] font-bold">Ticket booking</div>
             <div className="flex gap-3">
 
-              <div className="">
+              {/* <div className="">
                 <button className="bg-red-500  flex justify-center items-center text-white p-2 w-[200px] rounded-lg">Cancel booking</button>
-              </div>
+              </div> */}
               <div className="">
                 <button className="bg-white flex justify-center items-center text-[#007EC4] p-2 w-[200px] rounded-lg">
                   <CiSaveDown1 />
@@ -66,9 +67,12 @@ const ViewDetailedBooking = () => {
               </div>
             </div>
           </div>
-          <div className="">
+
+          <div >
             <ViewDetailedBookingCard singleBookingData={singleBookingData} />
           </div>
+          <TicketLinks singleBookingData={singleBookingData} />
+          <TermsAndConditions  />
         </div>
         <div className="w-[25%] flex flex-col gap-3  p-5 rounded-lg shadow-lg  border">
           <div className="border-y py-4 text-[1rem]">
@@ -161,6 +165,7 @@ const ViewDetailedBooking = () => {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );
