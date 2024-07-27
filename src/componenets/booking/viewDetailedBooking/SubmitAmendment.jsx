@@ -4,7 +4,6 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import DeleteModalTemplate from "./DeleteModalTemplateConfirm";
 import DeleteModalTemplateConfirm from "./DeleteModalTemplateConfirm";
 
 const SubmitAmendment = ({ singleBookingData }) => {
@@ -24,9 +23,7 @@ const SubmitAmendment = ({ singleBookingData }) => {
   const [amendmentId, setAmendmentId] = useState(null);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    getData();
-  }, []);
+
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -41,7 +38,6 @@ const SubmitAmendment = ({ singleBookingData }) => {
   };
 
   const getData = async () => {
-    console.log({ bookingId });
     if (bookingId === "") {
       toast.warning("Please Enter Booking ID");
       return;
@@ -50,7 +46,9 @@ const SubmitAmendment = ({ singleBookingData }) => {
     await axios
       .post(
         `${apiURL}admin-booking/view-booking`,
-        { bookingId },
+        {
+          bookingId,
+        },
         {
           headers: {
             authorization: `Bearer ${token}`,
@@ -59,6 +57,8 @@ const SubmitAmendment = ({ singleBookingData }) => {
       )
       .then((res) => {
         setLoading(false);
+
+        // Extract trips information
         const travellers = res.data.data.itemInfos?.AIR?.travellerInfos.map(
           (passenger) => ({
             fn: passenger.fN,
@@ -91,6 +91,7 @@ const SubmitAmendment = ({ singleBookingData }) => {
         setLoading(false);
       });
   };
+
 
   const checkAmendment = async () => {
     if (bookingId === "") {
@@ -126,6 +127,7 @@ const SubmitAmendment = ({ singleBookingData }) => {
       });
   };
 
+
   const submitAmendment = async () => {
     const finalTripList = selectedTrips.map((selection) => {
       const trip = trips[selection.tripIndex];
@@ -156,17 +158,19 @@ const SubmitAmendment = ({ singleBookingData }) => {
       requestData.trips = finalTripList;
     }
 
+    console.log(requestData);
+
     setLoading(true);
     await axios
-      .post(`${apiURL}admin-booking/submit-amendment`, requestData, {
+      .post(`${apiURL} / admin - booking / submit - amendment, requestData`, {
         headers: {
-          authorization: `Bearer ${token}`,
+          authorization: ` Bearer ${token}`,
         },
       })
       .then((res) => {
         setLoading(false);
         console.log(res.data);
-        toast.success("Amendment Submitted Successfully");
+        toast.success("Amendment Submitted Successfsully");
         setBookingId("");
         setRemarks("");
         setBookingId("");
@@ -200,6 +204,7 @@ const SubmitAmendment = ({ singleBookingData }) => {
     });
   };
 
+
   const handlePassengerSelection = (tripIndex, passengerIndex) => {
     setSelectedTrips((prevSelectedTrips) => {
       const trip = prevSelectedTrips.find((t) => t.tripIndex === tripIndex);
@@ -221,6 +226,11 @@ const SubmitAmendment = ({ singleBookingData }) => {
     });
   };
 
+  useEffect(() => {
+    getData();
+  }, []);
+
+
   return (
     <div className=" bg-gray-50 p-7">
       <div className={`transition-padding duration-300`}>
@@ -240,23 +250,46 @@ const SubmitAmendment = ({ singleBookingData }) => {
 
             <div className="space-y-6">
               {checkTrips?.map((trip, tripIndex) => (
-                <div key={tripIndex} className="bg-white shadow-md rounded-lg p-6">
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <p><span className="font-semibold">Source:</span> {trip.src}</p>
-                    <p><span className="font-semibold">Destination:</span> {trip.dest}</p>
-                    <p><span className="font-semibold">Departure Date:</span> {new Date(trip.departureDate).toLocaleString()}</p>
-                    <p><span className="font-semibold">Flight Numbers:</span> {trip.flightNumbers.join(", ")}</p>
-                    <p><span className="font-semibold">Airlines:</span> {trip.airlines.join(", ")}</p>
+                <div key={tripIndex} className="amendment-trip-container">
+                  <div className="amendment-trip-detail">
+                    {" "}
+                    <div>
+                      <b>Source</b> : {trip.src}
+                    </div>
+                    <div>
+                      <b>Destination</b> : {trip.dest}
+                    </div>
+                    <div>
+                      <b>Departure Date</b> :{" "}
+                      {new Date(trip.departureDate).toLocaleString()}
+                    </div>
+                    <div>
+                      <b>Flight Numbers</b> : {trip.flightNumbers.join(", ")}
+                    </div>
+                    <div>
+                      <b>Airlines</b> : {trip.airlines.join(", ")}
+                    </div>
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
-                    {Object.keys(trip.amendmentInfo).map((category, catIndex) => (
-                      <div key={catIndex} className="bg-gray-50 p-4 rounded">
-                        <h4 className="font-bold text-lg mb-2">{category}</h4>
-                        <p><span className="font-semibold">Amendment Charges:</span> {trip.amendmentInfo[category].amendmentCharges}</p>
-                        <p><span className="font-semibold">Refund Amount:</span> {trip.amendmentInfo[category].refundAmount}</p>
-                        <p><span className="font-semibold">Total Fare:</span> {trip.amendmentInfo[category].totalFare}</p>
-                      </div>
-                    ))}
+                  <div className="amendment-category-container">
+                    {Object.keys(trip.amendmentInfo).map(
+                      (category, catIndex) => (
+                        <div key={catIndex} className="amendment-category">
+                          <h4>{category}</h4>
+                          <div>
+                            <b>Amendment Charges</b>:{" "}
+                            {trip.amendmentInfo[category].amendmentCharges}
+                          </div>
+                          <div>
+                            <b>Refund Amount</b>:{" "}
+                            {trip.amendmentInfo[category].refundAmount}
+                          </div>
+                          <div>
+                            <b>Total Fare</b>:{" "}
+                            {trip.amendmentInfo[category].totalFare}
+                          </div>
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               ))}
@@ -274,36 +307,100 @@ const SubmitAmendment = ({ singleBookingData }) => {
               <div className="mt-8">
                 <h3 className="text-xl font-bold mb-4">Select the Trips and Passengers to Cancel</h3>
                 <div className="space-y-4">
-                  {trips?.map((item, tripIndex) => (
-                    <div key={tripIndex} className="bg-white shadow-md rounded-lg p-6 flex items-start space-x-4">
-                      <input
-                        type="checkbox"
-                        className="mt-1"
-                        checked={selectedTrips.some(t => t.tripIndex === tripIndex)}
-                        onChange={() => handleTripSelection(tripIndex)}
-                      />
-                      <div>
-                        <p><span className="font-semibold">Source:</span> {item?.src}</p>
-                        <p><span className="font-semibold">Destination:</span> {item?.dest}</p>
-                        <p><span className="font-semibold">Departure Date:</span> {item?.departureDate}</p>
-                        <div className="mt-4 space-y-2">
-                          {item?.travellers.map((traveller, TravellerIndex) => (
-                            <div key={TravellerIndex} className="flex items-center space-x-2">
+                  {trips?.length > 0 && (
+                    <div>
+                      {" "}
+                      <h3>Select the Trips and Passengers to Cancel</h3>
+                      <div className="selected-trips-container">
+                        {trips?.map((item, tripIndex) => (
+                          <div className="selected-trip">
+                            <div>
                               <input
                                 type="checkbox"
-                                checked={selectedTrips.some(t => t.tripIndex === tripIndex && t.passengerIndices.includes(TravellerIndex))}
-                                onChange={() => handlePassengerSelection(tripIndex, TravellerIndex)}
+                                className="selected-trip-checkbox"
+                                checked={selectedTrips.some(
+                                  (t) => t.tripIndex === tripIndex
+                                )}
+                                onChange={() => handleTripSelection(tripIndex)}
                               />
-                              <div>
-                                <p><span className="font-semibold">First Name:</span> {traveller?.fn}</p>
-                                <p><span className="font-semibold">Last Name:</span> {traveller?.ln}</p>
-                              </div>
                             </div>
-                          ))}
-                        </div>
+                            <div>
+                              <div>Source : {item?.src}</div>
+                              <div>Destination : {item?.dest}</div>
+                              <div>Departure Date : {item?.departureDate}</div>
+                            </div>
+                            <div className="travellers-container">
+                              {item?.travellers.map((traveller, TravellerIndex) => (
+                                <div>
+                                  <div>
+                                    <input
+                                      type="checkbox"
+                                      checked={selectedTrips.some(
+                                        (t) =>
+                                          t.tripIndex === tripIndex &&
+                                          t.passengerIndices.includes(
+                                            TravellerIndex
+                                          )
+                                      )}
+                                      onChange={() =>
+                                        handlePassengerSelection(
+                                          tripIndex,
+                                          TravellerIndex
+                                        )
+                                      }
+                                    />
+                                  </div>
+
+                                  <div>
+                                    First Name : {traveller?.fn}
+                                    <br />
+                                    Last Name : {traveller?.ln}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
                       </div>
+                      <br />
+                      <br />
+                      <label htmlFor="">Remarks</label>
+                      <br />
+                      <br />
+                      <textarea
+                        name=""
+                        id=""
+                        rows="5"
+                        cols="100"
+                        placeholder="Enter Remarks"
+                        value={Remarks}
+                        onChange={(e) => {
+                          setRemarks(e.target.value);
+                        }}
+                      ></textarea>
+                      <br />
+                      <br />
+                      <button onClick={checkAmendment}>
+                        Check Amendment Charges
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (bookingId === "") {
+                            toast.warning("Please Enter Booking ID");
+                            return;
+                          }
+                          if (Remarks === "") {
+                            toast.warning("Please Enter Remarks");
+                            return;
+                          }
+                          setIsDeleteModalOpen(true);
+                        }}
+                        disabled={Loading}
+                      >
+                        {Loading ? "Submitting..." : "Submit Amendment Charges"}
+                      </button>
                     </div>
-                  ))}
+                  )}
                 </div>
 
                 <div className="mt-8">
