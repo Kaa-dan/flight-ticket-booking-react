@@ -364,7 +364,7 @@ const SubmitAmendment = ({ singleBookingData }) => {
                       </div>
                       <br />
                       <br />
-                      <label htmlFor="">Remarks</label>
+                      {/* <label htmlFor="">Remarks</label>
                       <br />
                       <br />
                       <textarea
@@ -398,7 +398,7 @@ const SubmitAmendment = ({ singleBookingData }) => {
                         disabled={Loading}
                       >
                         {Loading ? "Submitting..." : "Submit Amendment Charges"}
-                      </button>
+                      </button> */}
                     </div>
                   )}
                 </div>
@@ -408,7 +408,7 @@ const SubmitAmendment = ({ singleBookingData }) => {
                   <textarea
                     id="remarks"
                     rows="5"
-                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md "
+                    className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-1/2 sm:text-sm border border-gray-300 rounded-md "
                     placeholder="Enter Remarks"
                     value={Remarks}
                     onChange={(e) => setRemarks(e.target.value)}

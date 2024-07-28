@@ -1,480 +1,324 @@
-import React from "react";
-import SideBar from "../SideBar";
+import React, { useState } from "react";
+import { MdFlight, MdOutlineAirlineSeatReclineExtra } from "react-icons/md";
+import { BsDoorClosedFill } from "react-icons/bs";
+import { IoIosTime } from "react-icons/io";
+import { MdDateRange } from "react-icons/md";
+import FlighFromToo from "../../../assets/booking/viewDetailedBookings/flight.svg";
+import paymentFlight from "../../../assets/booking/viewDetailedBookings/paymentFlight.png";
+import timeFormatChanger from "../../util/timeFormatChanger";
+import dateDateFormatChanger from "../../util/dateDateFormatChanger";
+import calculateDuration from "../../util/calculateDuration";
 
-import "./Amendment.css";
-import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import "./Amendment.css";
-import ArrowBack from "@mui/icons-material/ArrowBack";
-import { useNavigate } from "react-router-dom";
-import Loader from "../Repeatable/Loader";
-import DeleteModalTemplate from "../Repeatable/DeleteModalTemplate";
+const ViewDetailedBookingCard = ({ singleBookingData }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  let previousArrivalTime = null;
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
-const SubmitAmendment = () => {
-    const token = useSelector((state) => state.token);
-    const collapsed = useSelector((state) => state.collapse);
-    const apiURL = process.env.REACT_APP_API_URL;
-    const [bookingId, setBookingId] = useState("");
-    const [disable, setDisabled] = useState(false);
-    const [Remarks, setRemarks] = useState("");
-    const [Loading, setLoading] = useState(false);
-    const [ErrorDetails, setErrorDetails] = useState([]);
-    const [trips, setTrips] = useState(null);
-    const [selectedTrips, setSelectedTrips] = useState([]);
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-    const [checkTrips, setCheckTrips] = useState(null);
-
-    const navigate = useNavigate("");
-    const [amendmentId, setAmendmentId] = useState(null);
-
-    const dispatch = useDispatch();
-
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        return `${year} -${month} -${day}`;
-    };
-
-    const closeDeleteModal = () => {
-        setIsDeleteModalOpen(false);
-    };
-
-    const getData = async () => {
-        if (bookingId === "") {
-            toast.warning("Please Enter Booking ID");
-            return;
-        }
-        setLoading(true);
-        await axios
-            .post(
-                `${apiURL} / admin - booking / view - booking`,
-                {
-                    bookingId,
-                },
-                {
-                    headers: {
-                        authorization: `Bearer ${token}`,
-                    },
-                }
-            )
-            .then((res) => {
-                setLoading(false);
-
-                // Extract trips information
-                const travellers = res.data.data.itemInfos?.AIR?.travellerInfos.map(
-                    (passenger) => ({
-                        fn: passenger.fN,
-                        ln: passenger.lN,
-                    })
-                );
-                const extractedTrips = res.data.data.itemInfos?.AIR?.tripInfos.map(
-                    (tripInfo) => {
-                        const segments = tripInfo.sI;
-                        const firstSegment = segments[0];
-                        const lastSegment = segments[segments.length - 1];
-                        return {
-                            src: firstSegment.da.code,
-                            dest: lastSegment.aa.code,
-                            departureDate: formatDate(firstSegment.dt),
-                            travellers,
-                        };
-                    }
-                );
-                setTrips(extractedTrips);
-                setDisabled(true);
-            })
-            .catch((error) => {
-                if (error?.response?.data?.action === "logout") {
-                    setTimeout(() => {
-                        dispatch({ type: "logout" });
-                    }, 1000);
-                }
-                toast.error(error?.response?.data?.error);
-                setLoading(false);
-            });
-    };
-
-    const checkAmendment = async () => {
-        if (bookingId === "") {
-            toast.warning("Please Enter Booking ID");
-        }
-        setLoading(true);
-        await axios
-            .post(
-                `${apiURL} / admin - booking / amendment - charges`,
-                {
-                    bookingId,
-                    type: "CANCELLATION",
-                },
-                {
-                    headers: {
-                        authorization: `Bearer ${token}`,
-                    },
-                }
-            )
-            .then((res) => {
-                setLoading(false);
-                setCheckTrips(res.data.trips);
-            })
-            .catch((error) => {
-                if (error?.response?.data?.action === "logout") {
-                    setTimeout(() => {
-                        dispatch({ type: "logout" });
-                    }, 1000);
-                }
-                setLoading(false);
-                toast.error(error?.response?.data?.error);
-                setErrorDetails(error?.response?.data?.errors);
-            });
-    };
-
-    const submitAmendment = async () => {
-        const finalTripList = selectedTrips.map((selection) => {
-            const trip = trips[selection.tripIndex];
-            const selectedPassengers = selection.passengerIndices.map(
-                (index) => trip.travellers[index]
-            );
-
-            const tripDetails = {
-                src: trip.src,
-                dest: trip.dest,
-                departureDate: trip.departureDate,
-            };
-
-            if (selectedPassengers.length > 0) {
-                tripDetails.travellers = selectedPassengers;
-            }
-
-            return tripDetails;
-        });
-
-        const requestData = {
-            bookingId,
-            type: "CANCELLATION",
-            remarks: Remarks,
-        };
-
-        if (finalTripList.length > 0) {
-            requestData.trips = finalTripList;
-        }
-
-        console.log(requestData);
-
-        setLoading(true);
-        await axios
-            .post(`${apiURL} / admin - booking / submit - amendment, requestData`, {
-                headers: {
-                    authorization: ` Bearer ${token}`,
-                },
-            })
-            .then((res) => {
-                setLoading(false);
-                console.log(res.data);
-                toast.success("Amendment Submitted Successfsully");
-                setBookingId("");
-                setRemarks("");
-                setBookingId("");
-                setErrorDetails([]);
-                setTrips(null);
-                setAmendmentId(res.data.amendmentId);
-                setIsDeleteModalOpen(false);
-                setDisabled(false);
-                setCheckTrips(null);
-            })
-            .catch((error) => {
-                if (error?.response?.data?.action === "logout") {
-                    setTimeout(() => {
-                        dispatch({ type: "logout" });
-                    }, 1000);
-                }
-                toast.error(error?.response?.data?.error);
-                setLoading(false);
-                setErrorDetails(error?.response?.data?.errors);
-                setIsDeleteModalOpen(false);
-            });
-    };
-
-    const Clear = () => {
-        setBookingId("");
-        setErrorDetails([]);
-        setTrips(null);
-        setDisabled(false);
-        setAmendmentId(null);
-        setCheckTrips(null);
-    };
-
-    const handleTripSelection = (tripIndex) => {
-        setSelectedTrips((prevSelectedTrips) => {
-            if (prevSelectedTrips.some((t) => t.tripIndex === tripIndex)) {
-                return prevSelectedTrips.filter((t) => t.tripIndex !== tripIndex);
-            } else {
-                return [...prevSelectedTrips, { tripIndex, passengerIndices: [] }];
-            }
-        });
-    };
-
-    const handlePassengerSelection = (tripIndex, passengerIndex) => {
-        setSelectedTrips((prevSelectedTrips) => {
-            const trip = prevSelectedTrips.find((t) => t.tripIndex === tripIndex);
-            if (trip) {
-                if (trip.passengerIndices.includes(passengerIndex)) {
-                    trip.passengerIndices = trip.passengerIndices.filter(
-                        (id) => id !== passengerIndex
-                    );
-                } else {
-                    trip.passengerIndices.push(passengerIndex);
-                }
-                return [...prevSelectedTrips];
-            } else {
-                return [
-                    ...prevSelectedTrips,
-                    { tripIndex, passengerIndices: [passengerIndex] },
-                ];
-            }
-        });
-    };
-
-    return (
-        <div>
-            <SideBar />
-
-            <div
-                className={`dynamic-container ${collapsed ? "padding-after-collapse" : "padding-before-collapse"
-                    }`}
-            >
-                {Loading ? (
-                    <Loader />
-                ) : (
-                    <div className="main-container">
-                        <h1>
-                            {" "}
-                            <ArrowBack
-                                className="icons"
-                                onClick={() => {
-                                    navigate("/amendment");
-                                }}
-                            />
-                            &nbsp; Submit Amendment
-                        </h1>
-                        <br />
-                        <div>
-                            <label>Booking ID</label>
-                            <input
-                                disabled={disable}
-                                type="text"
-                                placeholder="Enter Booking ID"
-                                value={bookingId}
-                                onChange={(e) => {
-                                    setBookingId(e.target.value);
-                                }}
-                            />
-                            <button onClick={getData} disabled={Loading}>
-                                {Loading ? "Searching..." : "Search Booking"}
-                            </button>
-                            <button onClick={Clear}>Clear</button>
-                            <br />
-                            <br />
-                            <div>
-                                {ErrorDetails?.length > 0 && (
-                                    <div>
-                                        {ErrorDetails?.map((item) => (
-                                            <div className="amendment-error-container">
-                                                <div className="amendment-detail">
-                                                    <b>Details</b> <br />
-                                                    {item?.details}
-                                                </div>
-                                                <br />
-
-                                                <div className="amednment-detail">
-                                                    <b>Message</b>
-                                                    <br /> {item?.message}
-                                                </div>
-                                            </div>
-                                        ))}
-                                        <br />
-                                    </div>
-                                )}
-                            </div>
-                            {amendmentId && (
-                                <div className="amendment-submitted-container">
-                                    {" "}
-                                    <p>
-                                        Amendment is Submitted : Your Amendment ID is{" "}
-                                        <b>{amendmentId}</b>
-                                    </p>
-                                </div>
-                            )}
-                            <div>
-                                {checkTrips?.map((trip, tripIndex) => (
-                                    <div key={tripIndex} className="amendment-trip-container">
-                                        <div className="amendment-trip-detail">
-                                            {" "}
-                                            <div>
-                                                <b>Source</b> : {trip.src}
-                                            </div>
-                                            <div>
-                                                <b>Destination</b> : {trip.dest}
-                                            </div>
-                                            <div>
-                                                <b>Departure Date</b> :{" "}
-                                                {new Date(trip.departureDate).toLocaleString()}
-                                            </div>
-                                            <div>
-                                                <b>Flight Numbers</b> : {trip.flightNumbers.join(", ")}
-                                            </div>
-                                            <div>
-                                                <b>Airlines</b> : {trip.airlines.join(", ")}
-                                            </div>
-                                        </div>
-                                        <div className="amendment-category-container">
-                                            {Object.keys(trip.amendmentInfo).map(
-                                                (category, catIndex) => (
-                                                    <div key={catIndex} className="amendment-category">
-                                                        <h4>{category}</h4>
-                                                        <div>
-                                                            <b>Amendment Charges</b>:{" "}
-                                                            {trip.amendmentInfo[category].amendmentCharges}
-                                                        </div>
-                                                        <div>
-                                                            <b>Refund Amount</b>:{" "}
-                                                            {trip.amendmentInfo[category].refundAmount}
-                                                        </div>
-                                                        <div>
-                                                            <b>Total Fare</b>:{" "}
-                                                            {trip.amendmentInfo[category].totalFare}
-                                                        </div>
-                                                    </div>
-                                                )
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                                <br />
-                            </div>
-
-                            <p>Note</p>
-                            <li>
-                                To Cancel the Complete Booking , no need to select any trip .
-                            </li>
-                            <li>
-                                To Cancel a selected Trip for all the passengers, Just Select
-                                the Trip, no need to select any passengerr .
-                            </li>
-                            <br />
-                            {trips?.length > 0 && (
-                                <div>
-                                    {" "}
-                                    <h3>Select the Trips and Passengers to Cancel</h3>
-                                    <div className="selected-trips-container">
-                                        {trips?.map((item, tripIndex) => (
-                                            <div className="selected-trip">
-                                                <div>
-                                                    <input
-                                                        type="checkbox"
-                                                        className="selected-trip-checkbox"
-                                                        checked={selectedTrips.some(
-                                                            (t) => t.tripIndex === tripIndex
-                                                        )}
-                                                        onChange={() => handleTripSelection(tripIndex)}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <div>Source : {item?.src}</div>
-                                                    <div>Destination : {item?.dest}</div>
-                                                    <div>Departure Date : {item?.departureDate}</div>
-                                                </div>
-                                                <div className="travellers-container">
-                                                    {item?.travellers.map((traveller, TravellerIndex) => (
-                                                        <div>
-                                                            <div>
-                                                                <input
-                                                                    type="checkbox"
-                                                                    checked={selectedTrips.some(
-                                                                        (t) =>
-                                                                            t.tripIndex === tripIndex &&
-                                                                            t.passengerIndices.includes(
-                                                                                TravellerIndex
-                                                                            )
-                                                                    )}
-                                                                    onChange={() =>
-                                                                        handlePassengerSelection(
-                                                                            tripIndex,
-                                                                            TravellerIndex
-                                                                        )
-                                                                    }
-                                                                />
-                                                            </div>
-
-                                                            <div>
-                                                                First Name : {traveller?.fn}
-                                                                <br />
-                                                                Last Name : {traveller?.ln}
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <br />
-                                    <br />
-                                    <label htmlFor="">Remarks</label>
-                                    <br />
-                                    <br />
-                                    <textarea
-                                        name=""
-                                        id=""
-                                        rows="5"
-                                        cols="100"
-                                        placeholder="Enter Remarks"
-                                        value={Remarks}
-                                        onChange={(e) => {
-                                            setRemarks(e.target.value);
-                                        }}
-                                    ></textarea>
-                                    <br />
-                                    <br />
-                                    <button onClick={checkAmendment}>
-                                        Check Amendment Charges
-                                    </button>
-                                    <button
-                                        onClick={() => {
-                                            if (bookingId === "") {
-                                                toast.warning("Please Enter Booking ID");
-                                                return;
-                                            }
-                                            if (Remarks === "") {
-                                                toast.warning("Please Enter Remarks");
-                                                return;
-                                            }
-                                            setIsDeleteModalOpen(true);
-                                        }}
-                                        disabled={Loading}
-                                    >
-                                        {Loading ? "Submitting..." : "Submit Amendment Charges"}
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                        <br />
-                    </div>
-                )}
-            </div>
-            <ToastContainer />
-            <DeleteModalTemplate
-                isOpen={isDeleteModalOpen}
-                handleClose={closeDeleteModal}
-                handleDelete={submitAmendment}
-                description={"Submit the Amendment"}
+  return (
+    <div className="mt-4 border-l-0">
+      <div className="mx-auto rounded-lg p-7">
+        <div className="flex justify-between items-center bg-[#007EC4] p-4 rounded-t-xl text-white">
+          <div className="flex items-center">
+            <img
+              src="https://via.placeholder.com/50"
+              alt="Profile"
+              className="h-16 w-16 rounded-full object-cover mr-4"
             />
+            <div>
+              <div className="text-xl font-bold">James Doe</div>
+              <div className="text-sm">ASKY-005</div>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-xl font-bold">Price</div>
+            <div className="text-2xl font-bold">
+              ₹{" "}
+              {
+                singleBookingData?.itemInfos.AIR.totalPriceInfo.totalFareDetail
+                  .fC.TF
+              }
+              /-
+            </div>
+          </div>
         </div>
-    );
+        {singleBookingData?.itemInfos?.AIR.tripInfos.map((value, index) => {
+
+          console.log({ value })
+          return (
+            <div key={index} className="border px-2 py-4 mb-4 my-2">
+              <div className="flex gap-2 w-full p-1">
+                <div className="bg-[#D0E7F4] flex justify-center items-center gap-3 p-2 rounded-lg flex-col w-[40%]">
+                  <div className="w-full">
+                    <div className="gap-4 flex">
+                      <div>
+                        <img className="h-[60px]" src={paymentFlight} alt="" />
+                      </div>
+                      <div className="py-2 flex flex-col justify-between">
+                        <div className="flex flex-col gap-1">
+                          <div className="text-slate-400">Economyyyyyyy</div>
+                          <div className="font-semibold text-[1.2rem]">
+                            Emirates A380 Airbus
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex w-full h-full justify-between items-center">
+                    <div className="w-1/3 flex text-center flex-col gap-1 h-full">
+                      <div className="font-bold text-md">
+                        <span>{value.sI[0].da.code}</span>
+                      </div>
+                      <div className="text-sm font-medium">
+                        <span>{value.sI[0].da.city}</span>
+                      </div>
+                      <div className="font-extrabold text-[.8rem] w-full">
+                        <span className="w-full">{value.sI[0].da.name}</span>
+                      </div>
+                      <div className="text-sm font-medium">
+                        <span>{value.sI[0].da.country}</span>
+                      </div>
+                    </div>
+                    <div className="h-full flex flex-col w-1/3 justify-center">
+                      <div className="flex justify-center w-full items-center">
+                        <hr className="w-1/3 border-t border-black" />
+                        <MdFlight className="w-7 h-5 mx-2 rotate-90" />
+                        <hr className="w-1/3 border-t border-black" />
+                      </div>
+                      {value.sI.length === 1 ? (
+                        <div className="text-center text-sm font-semibold">
+                          Non Stop
+                        </div>
+                      ) : (
+                        <div className="text-center text-sm font-bold text-blue-500">
+                          Connection
+                        </div>
+                      )}
+                    </div>
+                    <div className="w-1/3 flex flex-col gap-1 h-full text-center">
+                      <div className="font-bold text-md">
+                        <span>
+                          {value.sI.length === 1
+                            ? value.sI[0].aa.code
+                            : value.sI[value.sI.length - 1].aa.code}
+                        </span>
+                      </div>
+                      <div className="text-sm font-medium">
+                        <span>
+                          {value.sI.length === 1
+                            ? value.sI[0].aa.city
+                            : value.sI[value.sI.length - 1].aa.city}
+                        </span>
+                      </div>
+                      <div className="font-extrabold text-[.8rem]">
+                        <span>
+                          {value.sI.length === 1
+                            ? value.sI[0].aa.name
+                            : value.sI[value.sI.length - 1].aa.name}
+                        </span>
+                      </div>
+                      <div className="text-sm font-medium">
+                        <span>
+                          {value.sI.length === 1
+                            ? value.sI[0].aa.country
+                            : value.sI[value.sI.length - 1].aa.country}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-[60%] flex flex-col justify-between pl-4">
+                  <div className="p-2 bg-white  rounded-lg flex items-center gap-3">
+                    <h1 className="text-2xl font-bold text-gray-800">
+                      Total Duration
+                    </h1>
+                    <h1 className="text-2xl font-bold text-gray-500">{value.sI.length === 1 ? calculateDuration(value.sI[0].dt, value.sI[0].at) : calculateDuration(value.sI[0].dt, value.sI[value.sI.length - 1].at)}</h1>
+                  </div>
+                  <div className="flex justify-between mb-2 w-full">
+                    <div className="flex gap-1 items-center w-1/3">
+                      <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
+                        <MdDateRange />
+                      </div>
+                      <div>
+                        <div className="text-[#495049] font-semibold">
+                          Departure Date
+                        </div>
+                        <div className="font-semibold">
+                          {dateDateFormatChanger(value.sI[0].dt)}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-1 items-center w-1/3">
+                      <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
+                        <IoIosTime />
+                      </div>
+                      <div>
+                        <div className="text-[#495049] font-semibold">
+                          Departure Time
+                        </div>
+                        <div className="font-semibold">
+                          {timeFormatChanger(value.sI[0].dt)}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-1 items-center w-1/3">
+                      <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
+                        <IoIosTime />
+                      </div>
+                      <div>
+                        <div className="text-[#495049] font-semibold">
+                          Arrival time
+                        </div>
+                        <div className="font-semibold">
+                          {value.sI.length === 1
+                            ? timeFormatChanger(value.sI[0].at)
+                            : timeFormatChanger(value.sI[value.sI.length - 1].at)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between w-full">
+                    <div className="flex gap-1 items-center w-1/3">
+                      <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
+                        <BsDoorClosedFill />
+                      </div>
+                      <div>
+                        <div className="text-[#495049] font-semibold">
+                          Terminal
+                        </div>
+                        <div className="font-semibold">
+                          {value.sI[0].da.terminal}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-1 items-center w-1/3">
+                      <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
+                        <BsDoorClosedFill />
+                      </div>
+                      <div>
+                        <div className="text-[#495049] font-semibold">
+                          Stops
+                        </div>
+                        <div className="font-semibold">{value.sI.length - 1}</div>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 items-center w-1/3">
+                      <div className="text-[1.5rem] text-white bg-[#0A2945] p-1 rounded-lg">
+                        <MdOutlineAirlineSeatReclineExtra />
+                      </div>
+                      <div className="flex flex-col">
+                        <div className="text-[#495049] font-semibold">Seat</div>
+                        <div className="font-semibold">0</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="w-full justify-end items-end flex py-2">
+                    {value.sI.length === 1 ? (
+                      <button
+                        disabled
+                        className="text-center text-sm font-semibold shadow-lg bg-[#007EC4] text-white py-1 px-3 rounded-lg"
+                      >
+                        Non Stop
+                      </button>
+                    ) : (
+                      <button
+                        className="text-center text-sm font-bold bg-[#007EC4] text-white py-1 px-3 rounded-lg"
+                        onClick={toggleDropdown}
+                      >
+                        View Connection detail
+                      </button>
+                    )}
+                  </div>
+
+                </div>
+              </div>
+              <div className="my-5">
+
+                {value.sI.length > 1 && isDropdownOpen && value.sI.map((singleValue, index) => {
+                  const layoverDuration = previousArrivalTime ? calculateDuration(previousArrivalTime, singleValue.dt) : null;
+                  previousArrivalTime = singleValue.at;
+
+                  return (
+                    <React.Fragment key={index}>
+                      {index !== 0 && (
+                        <div className="text-sm text-gray-500 mt-4">
+                          <span>There is a Special No Meal fare Provided by the Airline</span>
+                          <div className="flex justify-between bg-blue-900 text-white p-3 rounded-md mt-4 mb-4">
+                            <div className="text-sm">Require to change plane</div>
+                            <div className="text-base font-medium">
+                              <span className="text-sm">
+                                <div className="text-center">
+                                  <span className="text-sm">Total Layover Time: {layoverDuration}</span>
+                                </div>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex-col w-1/3">
+                          <div className="w-full">
+                            <div className="mb-2">
+                              <div className="font-semibold text-xs border rounded-md inline-flex items-center shadow-md p-1 space-x-2">
+                                <div className="w-5 h-5">
+                                  <img
+                                    src="https://myairdeal-backend.onrender.com/uploads/AirlinesLogo/AA.png"
+                                    alt="Airline Logo"
+                                    className="w-full h-full object-contain"
+                                  />
+                                </div>
+                                <div>
+                                  <div>{singleValue.fD.aI.name}</div>
+                                  <div className="flex items-center space-x-1">
+                                    <span>{singleValue.fD.aI.code}</span>
+                                    <MdFlight className="w-3 h-3 rotate-45" />
+                                    <span>Economy</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-lg font-bold">{singleValue.da.code}</div>
+                          <div className="text-sm">{singleValue.da.city}, {singleValue.da.country}</div>
+                          <div className="text-sm font-bold">{singleValue.da.name}</div>
+                          <div className="text-sm">{singleValue.da?.terminal || "N/A"}</div>
+                          <div className="text-sm font-semibold">{timeFormatChanger(singleValue.dt)}</div>
+                        </div>
+                        <div className="flex-col items-center w-1/3">
+                          <div className="text-center">
+                            <span className="text-sm">{calculateDuration(singleValue.dt, singleValue.at)}</span>
+                          </div>
+                          <div className="flex justify-center items-center">
+                            <hr className="w-1/3 border-t border-gray-300" />
+                            <MdFlight className="w-7 h-5 mx-2 rotate-90" />
+                            <hr className="w-1/3 border-t border-gray-300" />
+                          </div>
+                          <div className="text-center text-sm">Non Stop</div>
+                        </div>
+                        <div className="flex-col w-1/3 text-right">
+                          <div className="text-lg font-bold">{singleValue.aa.code}</div>
+                          <div className="text-sm">{singleValue.aa.city}, {singleValue.aa.country}</div>
+                          <div className="text-sm">{singleValue.aa.name}</div>
+                          <div className="text-sm">{singleValue.aa?.terminal || "N/A"}</div>
+                          <div className="text-sm font-semibold">{timeFormatChanger(singleValue.at)}</div>
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  );
+                })}
+              </div>
+
+
+
+
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 };
 
-export default SubmitAmendment;
+export default ViewDetailedBookingCard;
